@@ -41,7 +41,7 @@
  * [5.1 get all plugins](#5.1)
 
 ### <h2 id="1">1.JOB</h2>
-<h3 id="1.1">1.1 get all jobs information </h3>   
+<h3 id="1.1">*1.1 get all jobs information* </h3>   
 **Get** */api/job/alljobs*  
 **Response Code :** (Status 200)
 **response:**(json)  
