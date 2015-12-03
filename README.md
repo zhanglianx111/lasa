@@ -82,7 +82,7 @@
 ]
 ```
 
-<h3 id="1.2">1.2 get a job information</h3>  
+<h3 id="1.2">**1.2 get a job information**</h3>  
 **Get** */api/job/ajob/{jobname}*   
 *jobname*: job的名字  
 **Response Code :** (Status 200)
@@ -121,7 +121,7 @@
     "url": string
 }
 ```
-<h3 id="1.3">1.3 is job running?</h3>  
+<h3 id="1.3">**1.3 is job running?**</h3>  
  **Get** */api/job/isrunning/{jobname}*  
  *jobname*: job的名字  
  **Response Code :** (Status 200)  
@@ -130,7 +130,7 @@
 bool
 ```
 
-<h3 id="1.4">1.4 create a job</h3>  
+<h3 id="1.4">**1.4 create a job**</h3>  
  **Post** */api/job/create/{jobname}*  
  *jobname*: job的名字  
  *请求body字段及含义
@@ -170,7 +170,7 @@ bool
 }
 ```
 
-<h3 id="1.5">1.5 delete a job</h3>  
+<h3 id="1.5">**1.5 delete a job**</h3>  
 **Post** */api/job/delete/{jobname}*  
 *jobname*: job的名字  
 **Response Code :** (Status 200)
@@ -180,7 +180,7 @@ bool
 }
 ```
 
-<h3 id="1.6">1.6 disable a job</h3>  
+<h3 id="1.6">**1.6 disable a job**</h3>  
 **Post** */api/job/disable/{jobname}*  
 *jobname*: job的名字  
 **Response Code :** (Status 200)
@@ -189,7 +189,7 @@ bool
 
 ```
 
-<h3 id="1.7">1.7 enable a job</h3>  
+<h3 id="1.7">**1.7 enable a job**</h3>  
 **Post** */api/job/enable/{jobname}*  
 *jobname*: job的名字  
 **Response Code :** (Status 200)
@@ -197,7 +197,7 @@ bool
 bool
 ```
 
-<h3 id="1.8">1.8 rename a job</h3>  
+<h3 id="1.8">**1.8 rename a job**</h3>  
 **Post** */api/job/rename/{oldname}/{newname}*  
 *oldname*: job的老名字
 *newname*: job的新名字  
@@ -206,7 +206,7 @@ bool
  string
  ```
 
-<h3 id="1.9">1.9 get all builds of a job</h3>  
+<h3 id="1.9">**1.9 get all builds of a job**</h3>  
 **Get** */api/job/{jobname}/allbuilds*  
 *jobname*: job的名字  
 **Response Code :** (Status 200)
@@ -219,7 +219,7 @@ bool
 ]
  ```
 
-<h3 id="1.10">1.10 build a job</h3>  
+<h3 id="1.10">**1.10 build a job**</h3>  
 **Post** */api/job/build/{jobname}*  
 *jobname*: job的名字  
 **Response Code :** (Status 200)
@@ -227,7 +227,7 @@ bool
 bool
 ```
 
-<h3 id="1.11">1.11 get build log of a job</h3>  
+<h3 id="1.11">**1.11 get build log of a job**</h3>  
 **Post** */api/job/buildlog/{jobname}/{buildnumber}*     
 *jobname*: job的名字  
 *buildnumber*： build id  
@@ -236,7 +236,7 @@ bool
 strings
 ```
 
-<h3 id="1.12">1.12 stop build of a job</h3>  
+<h3 id="1.12">**1.12 stop build of a job**</h3>  
 **Post** */api/job/stopbuild/{jobname}/{buildnumber}*  
 *jobname*: job的名字  
 *buildnumber*： build id  
@@ -244,7 +244,7 @@ strings
 ```json
 bool
 ```
-<h3 id="1.13">1.13 copy job from anothor one</h3>  
+<h3 id="1.13">**1.13 copy job from anothor one**</h3>  
 **Post** */api/job/copy/{from}/{newname}*  
 *from*: job的名字  
 *newname*: 新job的名字  
@@ -253,7 +253,7 @@ bool
 bool
 ```
 ### <h2 id="2">2 NODE</h2>
-<h3 id="2.1">2.1 add a node</h3>  
+<h3 id="2.1">**2.1 add a node**</h3>  
 **Post** */api/node/create/{nodename}/{numexecutors}/{description}/{remotefs}*  
 **Request Body**  
 ```json
@@ -274,14 +274,14 @@ bool
 bool
 ```
 
-<h3 id="2.2">2.2 delete a node</h3>  
+<h3 id="2.2">**2.2 delete a node**</h3>  
 **Post** */api/node/delete/{nodename}*  
 **Response Code :** (Status 200) 
 ```json
 bool
 ```
 
-<h3 id="2.3">2.3 get all nodes informat</h3>
+<h3 id="2.3">**2.3 get all nodes informat**</h3>
 **Get** */api/node/allnodes*  
 **Response Code :** (Status 200)  
 ```json
@@ -292,7 +292,7 @@ bool
 ]
 ```
 
-<h3 id="2.4">2.4 get a node information</h3>  
+<h3 id="2.4">**2.4 get a node information**</h3>  
 **Get** */api/node/anode/{nodename}*  
 **Response Code :** (Status 200)  
 ```json
@@ -304,41 +304,41 @@ bool
 }
 ```
 
-<h3 id="2.5">2.5 get a node idle info</h3>  
+<h3 id="2.5">**2.5 get a node idle info**</h3>  
 **Get** */api/node/isidle/{nodename}*  
 **Response Code :** (Status 200)  
 ```json
 bool
 ```
  
-<h3 id="2.6">2.6 set a node online</h3>  
+<h3 id="2.6">**2.6 set a node online******</h3>  
 **Post** */api/node/online/{nodename}*  
 **Response Code :** (Status 200)  
 ```json
 bool
 ```
 
-<h3 id="2.7">2.7 set a node offline</h3>   
+<h3 id="2.7">**2.7 set a node offline**</h3>   
 **Post** */api/node/offline/{nodename}*  
 **Response Code :** (Status 200)  
 ```json
 bool
 ```
-<h3 id="2.8">2.8 is node online?</h3>  
+<h3 id="2.8">**2.8 is node online?**</h3>  
 **Get** */api/node/isonline/{nodename}*  
 **Response Code :** (Status 200)  
 ```json
 bool
 ```
 
-<h3 id="2.9">2.9 get node launching log</h3>  
+<h3 id="2.9">**2.9 get node launching log**</h3>  
 **Get** */api/node/log/{nodename}*  
 **Response Code :** (Status 200)  
 ```json
 string
 ```
 
-<h3 id="2.10">2.10 disconnect node</h3>  
+<h3 id="2.10">**2.10 disconnect node**</h3>  
 **Post** */api/node/disconnect/{nodename}*  
 **Response Code :** (Status 200)  
 ```json
@@ -346,7 +346,7 @@ bool
 ```
 
 ### <h2 id="3">3 VIEW</h2>
-<h3 id="3.1">3.1 get all views</h3>  
+<h3 id="3.1">**3.1 get all views**</h3>  
 **Get** */api/view/allviews*  
 **Response Code :** (Status 200) 
 ```json
@@ -371,7 +371,7 @@ bool
 ]
 ```
 
-<h3 id="3.2">3.2 get a view</h3>  
+<h3 id="3.2">**3.2 get a view**</h3>  
 **Get** */api/view/{viewname}*  
 **Response Code :** (Status 200) 
 ```json
@@ -394,21 +394,21 @@ bool
 }
 ```
 
-<h3 id="3.3">3.3 add a view</h3>  
+<h3 id="3.3">**3.3 add a view**</h3>  
 **Post** */api/view/create/{viewname}/{type}*  
 **Response Code :** (Status 200) 
 ```json
 bool
 ```
 
-<h3 id="3.4">3.4 add a job into view</h3>  
+<h3 id="3.4">**3.4 add a job into view**</h3>  
 **Post** */api/view/addjob/{viewname}/{jobname}*  
 **Response Code :** (Status 200) 
 ```json
 bool
 ```
 
-<h3 id="3.5">3.5 delete a job from view</h3>  
+<h3 id="3.5">**3.5 delete a job from view**</h3>  
 **Post** */api/view/deletejob/{viewname}/{jobname}*  
 **Response Code :** (Status 200) 
 ```json
@@ -416,14 +416,14 @@ bool
 ```
 
 ### <h2 id="4">4 LOG</h2>
-<h3 id="4.1">4.1 get log level</h3>  
+<h3 id="4.1">**4.1 get log level**</h3>  
 **Get** */api/log/level*  
 **Response Code :** (Status 200)  
 ```json
 string
 ```
 
-<h3 id="4.2">4.2 set log level</h3>  
+<h3 id="4.2">**4.2 set log level**</h3>  
 **Post** */api/log/set/{level}*  
 **Response Code :** (Status 200)  
 ```json
@@ -431,7 +431,7 @@ string
 ```
 ###<h2 id="5">5 PLUGINS</h2>
 
-<h3 id="5.1">5.1 get all plugins</h3>  
+<h3 id="5.1">**5.1 get all plugins**</h3>  
 **Get** */api/plugins/{depth}*  
 *depth*:  
 - 0: 获取所有plugins    
