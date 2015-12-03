@@ -41,7 +41,7 @@
  * [5.1 get all plugins](#5.1)
 
 ### <h2 id="1">1.JOB</h2>
-<h3 id="1.1">1.1 get all jobs information </h3> 
+<h3 id="1.1">1.1 get all jobs information </h3>   
 **Get** */api/job/alljobs*  
 **Response Code :** (Status 200)
 **response:**(json)  
@@ -244,7 +244,7 @@ strings
 ```json
 bool
 ```
-<h3 id="1.13">1.13 copy job from anothor one</h3>
+<h3 id="1.13">1.13 copy job from anothor one</h3>  
 **Post** */api/job/copy/{from}/{newname}*  
 *from*: job的名字  
 *newname*: 新job的名字  
@@ -253,7 +253,7 @@ bool
 bool
 ```
 ### <h2 id="2">2 NODE</h2>
-<h3 id="2.1">2.1 add a node</h3>
+<h3 id="2.1">2.1 add a node</h3>  
 **Post** */api/node/create/{nodename}/{numexecutors}/{description}/{remotefs}*  
 **Request Body**  
 ```json
@@ -274,7 +274,7 @@ bool
 bool
 ```
 
-<h3 id="2.2">2.2 delete a node</h3>
+<h3 id="2.2">2.2 delete a node</h3>  
 **Post** */api/node/delete/{nodename}*  
 **Response Code :** (Status 200) 
 ```json
@@ -292,7 +292,7 @@ bool
 ]
 ```
 
-<h3 id="2.4">2.4 get a node information</h3>
+<h3 id="2.4">2.4 get a node information</h3>  
 **Get** */api/node/anode/{nodename}*  
 **Response Code :** (Status 200)  
 ```json
@@ -304,41 +304,41 @@ bool
 }
 ```
 
-<h3 id="2.5">2.5 get a node idle info</h3>
+<h3 id="2.5">2.5 get a node idle info</h3>  
 **Get** */api/node/isidle/{nodename}*  
 **Response Code :** (Status 200)  
 ```json
 bool
 ```
  
-<h3 id="2.6">2.6 set a node online</h3>
+<h3 id="2.6">2.6 set a node online</h3>  
 **Post** */api/node/online/{nodename}*  
 **Response Code :** (Status 200)  
 ```json
 bool
 ```
 
-<h3 id="2.7">2.7 set a node offline</h3>
+<h3 id="2.7">2.7 set a node offline</h3>   
 **Post** */api/node/offline/{nodename}*  
 **Response Code :** (Status 200)  
 ```json
 bool
 ```
-<h3 id="2.8">2.8 is node online?</h3>
+<h3 id="2.8">2.8 is node online?</h3>  
 **Get** */api/node/isonline/{nodename}*  
 **Response Code :** (Status 200)  
 ```json
 bool
 ```
 
-<h3 id="2.9">2.9 get node launching log</h3>
+<h3 id="2.9">2.9 get node launching log</h3>  
 **Get** */api/node/log/{nodename}*  
 **Response Code :** (Status 200)  
 ```json
 string
 ```
 
-<h3 id="2.10">2.10 disconnect node</h3>
+<h3 id="2.10">2.10 disconnect node</h3>  
 **Post** */api/node/disconnect/{nodename}*  
 **Response Code :** (Status 200)  
 ```json
@@ -346,7 +346,7 @@ bool
 ```
 
 ### <h2 id="3">3 VIEW</h2>
-<h3 id="3.1">3.1 get all views</h3>
+<h3 id="3.1">3.1 get all views</h3>  
 **Get** */api/view/allviews*  
 **Response Code :** (Status 200) 
 ```json
@@ -371,7 +371,7 @@ bool
 ]
 ```
 
-<h3 id="3.2">3.2 get a view</h3>
+<h3 id="3.2">3.2 get a view</h3>  
 **Get** */api/view/{viewname}*  
 **Response Code :** (Status 200) 
 ```json
@@ -394,21 +394,21 @@ bool
 }
 ```
 
-<h3 id="3.3">3.3 add a view</h3>
+<h3 id="3.3">3.3 add a view</h3>  
 **Post** */api/view/create/{viewname}/{type}*  
 **Response Code :** (Status 200) 
 ```json
 bool
 ```
 
-<h3 id="3.4">3.4 add a job into view</h3>
+<h3 id="3.4">3.4 add a job into view</h3>  
 **Post** */api/view/addjob/{viewname}/{jobname}*  
 **Response Code :** (Status 200) 
 ```json
 bool
 ```
 
-<h3 id="3.5">3.5 delete a job from view</h3>
+<h3 id="3.5">3.5 delete a job from view</h3>  
 **Post** */api/view/deletejob/{viewname}/{jobname}*  
 **Response Code :** (Status 200) 
 ```json
