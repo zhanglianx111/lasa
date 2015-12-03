@@ -18,7 +18,10 @@
   <scm class="hudson.plugins.git.GitSCM" plugin="git@2.4.0">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
-      <hudson.plugins.git.UserRemoteConfig/>
+      <hudson.plugins.git.UserRemoteConfig>
+        <url>http://git.yunpro.cn/zhanglianxiang/hello-node.git</url>
+        <credentialsId>544d6bd6-d4f8-4ef0-8411-8b3c211affe2</credentialsId>
+      </hudson.plugins.git.UserRemoteConfig>
     </userRemoteConfigs>
     <branches>
       <hudson.plugins.git.BranchSpec>
