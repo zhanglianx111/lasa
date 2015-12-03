@@ -217,27 +217,16 @@ bool
        "url": string
    },
 ]
-<<<<<<< HEAD
  ```
-10.build a job
-**Post** */api/job/build/{jobname}*
-=======
-```
 
-<h3 id="1.10">1.10 build a job</h3>   
-**Post** */api/job/build/{jobname}*   
+<h3 id="1.10">1.10 build a job</h3>  
+**Post** */api/job/build/{jobname}*  
 *jobname*: job的名字  
->>>>>>> 3a799780bf9b07c6866727ca2187f2dc63a41320
 **Response Code :** (Status 200)
 ```json
 bool
 ```
 
-<<<<<<< HEAD
-### Node
-1.add a node
-**Post** */api/node/{nodename}/{numexecutors}/{description}/{remotefs}*  
-=======
 <h3 id="1.11">1.11 get build log of a job</h3>  
 **Post** */api/job/buildlog/{jobname}/{buildnumber}*     
 *jobname*: job的名字  
@@ -280,7 +269,6 @@ bool
     "retryWaitTime"         string `json:"retryWaitTime"`,
     "lanuchTimeoutSeconds"  string `json:"lanuchTimeoutSeconds"`,
 ```
->>>>>>> 3a799780bf9b07c6866727ca2187f2dc63a41320
 **Response Code :** (Status 200)  
 ```json
 bool
