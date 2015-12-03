@@ -120,7 +120,6 @@
     "name": string,
     "url": string
 }
-
 ```
 <h3 id="1.3">1.3 is job running?</h3>  
  **Get** */api/job/isrunning/{jobname}*  
@@ -129,20 +128,45 @@
  **response:**(bool)
 ```json
 bool
-
 ```
 
 <h3 id="1.4">1.4 create a job</h3>  
  **Post** */api/job/create/{jobname}*  
  *jobname*: job的名字  
- *job的配置以xml的形式放在请求体中，具体参数见[job配置参数](https://github.com/zhanglianx111/jenkins_api/blob/master/src/handlers/_tests/config.xml)*   
+ *请求body字段及含义
+```json
+{
+    "description": string,
+    "build": {
+        "dockerbuildandpublish":{
+            "repositryname": string, //用户自定义的repo name
+            "tag": string,             //images tag infomation
+            "dockerregitstry": string, //default: http://dhub.yunpro.cn
+            "skippush": bool //是否跳过push到docker registry
+        },
+        "executeshell": {
+            command: string
+        }
+    }
+}  
+```
  **Response Code :** (Status 200)
  ```json
 {
-    "description": string,
-    "displayName": string,
     "name": string,
-    "url": string
+    "description": string,
+    "url": string,
+    "build": {
+        "dockerbuildandpublish": {
+            "repositryname": string,
+            "tag": string,
+            "dockerregistry": string,
+            "skippush": bool
+         }
+         "executeshell": {
+             "command": string
+         }
+    }
 }
 ```
 
