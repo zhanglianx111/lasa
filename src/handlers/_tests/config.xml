@@ -1,27 +1,24 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>balabala</description>
+  <description></description>
   <keepDependencies>false</keepDependencies>
   <properties>
     <jenkins.plugins.bearychat.BearychatNotifier_-BearychatJobProperty plugin="bearychat@1.4">
-      <room>#ci</room>
-      <startNotification>true</startNotification>
-      <notifySuccess>true</notifySuccess>
-      <notifyAborted>true</notifyAborted>
-      <notifyNotBuilt>true</notifyNotBuilt>
-      <notifyUnstable>true</notifyUnstable>
-      <notifyFailure>true</notifyFailure>
-      <notifyBackToNormal>true</notifyBackToNormal>
+      <room></room>
+      <startNotification>false</startNotification>
+      <notifySuccess>false</notifySuccess>
+      <notifyAborted>false</notifyAborted>
+      <notifyNotBuilt>false</notifyNotBuilt>
+      <notifyUnstable>false</notifyUnstable>
+      <notifyFailure>false</notifyFailure>
+      <notifyBackToNormal>false</notifyBackToNormal>
     </jenkins.plugins.bearychat.BearychatNotifier_-BearychatJobProperty>
   </properties>
   <scm class="hudson.plugins.git.GitSCM" plugin="git@2.4.0">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
-      <hudson.plugins.git.UserRemoteConfig>
-        <url>http://git.yunpro.cn/zhanglianxiang/jenkinsRestApiBaseImagesDockerfile.git</url>
-        <credentialsId>ea01c794-d823-494c-9581-d4e2f065106a</credentialsId>
-      </hudson.plugins.git.UserRemoteConfig>
+      <hudson.plugins.git.UserRemoteConfig/>
     </userRemoteConfigs>
     <branches>
       <hudson.plugins.git.BranchSpec>
@@ -33,64 +30,30 @@
     <extensions/>
   </scm>
   <canRoam>true</canRoam>
-  <disabled>true</disabled>
+  <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers/>
-  <concurrentBuild>true</concurrentBuild>
+  <concurrentBuild>false</concurrentBuild>
   <builders>
     <com.cloudbees.dockerpublish.DockerBuilder plugin="docker-build-publish@1.0.1">
-      <server plugin="docker-commons@1.2">
-        <uri>tcp://10.12.1.133:2375</uri>
-      </server>
-      <registry plugin="docker-commons@1.2">
-        <url>http://dhub.yunpro.cn</url>
-        <credentialsId>ea01c794-d823-494c-9581-d4e2f065106a</credentialsId>
-      </registry>
-      <repoName>zhanglianxiang/base</repoName>
-      <noCache>true</noCache>
+      <server plugin="docker-commons@1.2"/>
+      <registry plugin="docker-commons@1.2"/>
+      <repoName></repoName>
+      <noCache>false</noCache>
       <forcePull>true</forcePull>
       <dockerfilePath></dockerfilePath>
-      <skipBuild>true</skipBuild>
+      <skipBuild>false</skipBuild>
       <skipDecorate>false</skipDecorate>
-      <repoTag>v1.0</repoTag>
-      <skipPush>true</skipPush>
-      <createFingerprint>true</createFingerprint>
-      <skipTagLatest>true</skipTagLatest>
+      <repoTag></repoTag>
+      <skipPush>false</skipPush>
+      <createFingerprint>false</createFingerprint>
+      <skipTagLatest>false</skipTagLatest>
     </com.cloudbees.dockerpublish.DockerBuilder>
+    <hudson.tasks.Shell>
+      <command></command>
+    </hudson.tasks.Shell>
   </builders>
-  <publishers>
-    <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.40.5">
-      <recipientList>zhanglianxiang@goyoo.com</recipientList>
-      <configuredTriggers>
-        <hudson.plugins.emailext.plugins.trigger.AlwaysTrigger>
-          <email>
-            <recipientList>fengpan@goyoo.com</recipientList>
-            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>$PROJECT_DEFAULT_CONTENT</body>
-            <recipientProviders>
-              <hudson.plugins.emailext.plugins.recipients.DevelopersRecipientProvider/>
-              <hudson.plugins.emailext.plugins.recipients.ListRecipientProvider/>
-            </recipientProviders>
-            <attachmentsPattern></attachmentsPattern>
-            <attachBuildLog>false</attachBuildLog>
-            <compressBuildLog>false</compressBuildLog>
-            <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>
-            <contentType>project</contentType>
-          </email>
-        </hudson.plugins.emailext.plugins.trigger.AlwaysTrigger>
-      </configuredTriggers>
-      <contentType>default</contentType>
-      <defaultSubject>$DEFAULT_SUBJECT</defaultSubject>
-      <defaultContent>$DEFAULT_CONTENT</defaultContent>
-      <attachmentsPattern></attachmentsPattern>
-      <presendScript>$DEFAULT_PRESEND_SCRIPT</presendScript>
-      <attachBuildLog>false</attachBuildLog>
-      <compressBuildLog>false</compressBuildLog>
-      <replyTo>zhanglianxiang@goyoo.com</replyTo>
-      <saveOutput>false</saveOutput>
-      <disabled>false</disabled>
-    </hudson.plugins.emailext.ExtendedEmailPublisher>
-  </publishers>
+  <publishers/>
   <buildWrappers/>
 </project>
