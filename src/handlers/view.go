@@ -1,10 +1,11 @@
 package handlers
 
 import (
-	//"github.com/bndr/gojenkins"
 	"encoding/json"
 	"fmt"
-	"github.com/zhanglianx111/gojenkins"
+
+	"github.com/bndr/gojenkins"
+	//"github.com/zhanglianx111/gojenkins"
 	"net/http"
 )
 
