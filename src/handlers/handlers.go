@@ -2,12 +2,13 @@ package handlers
 
 import (
 	"fmt"
-	log "github.com/Sirupsen/logrus"
-	//"github.com/bndr/gojenkins"
-	"github.com/zhanglianx111/gojenkins"
+
 	"net/http"
 	"os"
 	"time"
+
+	log "github.com/Sirupsen/logrus"
+	"github.com/bndr/gojenkins"
 	//"github.com/zhanglianx111/gojenkins"
 )
 
