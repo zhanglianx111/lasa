@@ -185,10 +185,9 @@ func HandlerCreateJob(w http.ResponseWriter, r *http.Request) {
 
 	//creating job is ok
 	log.Debugf("job base:%s, job raw:", job.Base, job.Raw)
-	data := map[string]string{"name": job.Raw.Name,
-		"description": job.Raw.Description,
-		"displayName": job.Raw.DisplayName,
-		"url":         job.Raw.URL}
+	data := map[string]string{"name": job.Raw.Name} // "description": job.Raw.Description,
+	// "displayName": job.Raw.DisplayName,
+	// "url":         job.Raw.URL
 
 	jsonData, err := json.Marshal(data)
 	if err != nil {
