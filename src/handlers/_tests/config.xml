@@ -25,7 +25,7 @@
     </userRemoteConfigs>
     <branches>
       <hudson.plugins.git.BranchSpec>
-        <name>*/master</name>
+        <name></name>
       </hudson.plugins.git.BranchSpec>
     </branches>
     <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
@@ -40,8 +40,12 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <com.cloudbees.dockerpublish.DockerBuilder plugin="docker-build-publish@1.0.1">
-      <server plugin="docker-commons@1.2"/>
-      <registry plugin="docker-commons@1.2"/>
+      <server plugin="docker-commons@1.2">
+        <uri></uri>
+      </server>
+      <registry plugin="docker-commons@1.2">
+        <url></url>
+      </registry>
       <repoName></repoName>
       <noCache>false</noCache>
       <forcePull>true</forcePull>
