@@ -137,15 +137,21 @@ bool
 ```json
 {
     "description": string,
-    "build": {
+    "scm": {
+        "repositryurl": string,
+        "credentialsid": string,
+        "branchestobuild": string
+        }
+    "builders": {
         "dockerbuildandpublish":{
-            "repositryname": string, //用户自定义的repo name
-            "tag": string,             //images tag infomation
-            "dockerregitstry": string, //default: http://dhub.yunpro.cn
-            "skippush": bool //是否跳过push到docker registry
+            "repositryname": string, // 用户自定义的repo name
+            "tag": string,             // images tag infomation
+            "dockerhosturi": string, // default: tcp://xxxx:xxx
+            "dockerregistryurl": string, // http://dhub.yunpro.cn
+            "skippush": bool // 是否跳过push到docker registry
         },
         "executeshell": {
-            command: string
+            command: string //用户使用ExecuteShell，默认为""
         }
     }
 }  
@@ -153,20 +159,7 @@ bool
  **Response Code :** (Status 200)
  ```json
 {
-    "name": string,
-    "description": string,
-    "url": string,
-    "build": {
-        "dockerbuildandpublish": {
-            "repositryname": string,
-            "tag": string,
-            "dockerregistry": string,
-            "skippush": bool
-         }
-         "executeshell": {
-             "command": string
-         }
-    }
+    "name": string, // job name
 }
 ```
 
