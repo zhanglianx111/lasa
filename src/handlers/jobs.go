@@ -3,19 +3,180 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	log "github.com/Sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
 	"strconv"
 	"utils"
+
+	log "github.com/Sirupsen/logrus"
+	"github.com/beevik/etree"
+	simplejs "github.com/bitly/go-simplejson"
 )
+
+//job configuration path
+/*
+	./project/scm/userRemoteConfigs/hudson.plugins.git.UserRemoteConfig/url
+	./project/description
+	./project/scm/userRemoteConfigs/hudson.plugins.git.UserRemoteConfig/credentialsId
+	./project/builders/com.cloudbees.dockerpublish.DockerBuilder/repoName
+	./project/builders/com.cloudbees.dockerpublish.DockerBuilder/repoTag
+	./project/builders/com.cloudbees.dockerpublish.DockerBuilder/skipPush
+	./project/builders/hudson.tasks.Shell/command
+*/
+const (
+	// 1
+	Root = "project/"
+	// 2
+	Scm      = "scm/"
+	Builders = "builders/"
+	// 3
+	UsrRemoteConfigs                       = "userRemoteConfigs/"
+	ComCloudbeesDockerpublishDockerBuilder = "com.cloudbees.dockerpublish.DockerBuilder/"
+	// 4
+	Branches                         = "branches/"
+	HudsonPluginsGitBranchSpec       = "hudson.plugins.git.BranchSpec/"
+	HudsonTasksShell                 = "hudson.tasks.Shell/"
+	HudsonPluginsGitUserRemoteConfig = "hudson.plugins.git.UserRemoteConfig/"
+	Registry                         = "registry/"
+	Server                           = "server/"
+	// 5
+	Uri           = "uri"           //docker主机 ip:port
+	CredentialsId = "credentialsId" //源代码仓库的用户名和密码
+	Name          = "name"          //使用源代码的哪个分支，例如：master，dev等
+	RepoName      = "repoName"      //image的repo信息
+	RepoTag       = "repoTag"       //image的tag信息
+	SkipPush      = "skipPush"      //是否跳过push操作，bool:ture or false
+	SkipTagLatest = "skipTagLatest" //是否跳过使用latest最为tag，bool: true or false
+	Command       = "command"       //使用execute shell的命令内容
+	Url           = "url"           //docker registry address or 用户项目源代码仓库地址
+	Description   = "description"   //用户项目的描述
+	DockerHostUri = ""
+
+	BaseCfg = "/Users/zhanglianxiang/workspace/jenkins_api/src/handlers/_tests/config.xml"
+)
+
+type JobCfg struct {
+	JobName     string `json:jobname`
+	Description string `json:description`
+	Scm         string `json:scm`
+	Build       map[string]interface{}
+}
+
+/*
+用户自定义参数：
+{
+	"description": string, // default: ""
+	"scm" : {
+		"repositryurl": string, //用户项目的git地址
+		"credentialsid": string, //用户usrname/passwd
+		"branchestobuild": stirng, //用户想要build的分支名称
+	}
+    "builders": {
+        "dockerbuildandpublish":{
+            "repositryname": string, //用户自定义的在dockerregistry中的repo name
+            "tag": string,             //images tag infomation
+            "dockerhosturi": string, //default: http://dhub.yunpro.cn
+			"dockerregitstryurl": string, //docker url
+			"skippush": bool //是否跳过push到docker registry, defaule:false
+        },
+        "executeshell": {
+			command: string // default: ""
+        }
+    }
+}
+
+*/
 
 func HandlerCreateJob(w http.ResponseWriter, r *http.Request) {
 	params := r.URL.Query()
 	jobid := params.Get(":jobid")
+	js, err := simplejs.NewFromReader(r.Body)
+	if err != nil {
+		log.Errorf(err.Error())
+		fmt.Fprintf(w, err.Error())
+		return
+	}
+	defer r.Body.Close()
+	// get job config
+	desc, _ := js.Get("description").String()
+	// scm
+	repositryurl, _ := js.Get("scm").Get("repositryurl").String()
+	credentialsid, _ := js.Get("scm").Get("credentialsid").String()
+	branchestobuild, _ := js.Get("scm").Get("branchestobuild").String()
+	// builders
+	repo, _ := js.Get("builders").Get("dockerbuildandpublish").Get("repositryname").String()
+	tag, _ := js.Get("builders").Get("dockerbuildandpublish").Get("tag").String()
+	dockerRegistry, _ := js.Get("builders").Get("dockerbuildandpublish").Get("dockerregitstryurl").String()
+	skipPush, _ := js.Get("builders").Get("dockerbuildandpublish").Get("skippush").String()
+	dockerHostUri, _ := js.Get("builders").Get("dockerbuildandpublish").Get("dockerhosturi").String()
+	cmd, _ := js.Get("builders").Get("executeshell").Get("command").String()
 
-	job_data := getFileAsString("config.xml")
+	doc := etree.NewDocument()
+	if err := doc.ReadFromFile(BaseCfg); err != nil {
+		log.Errorf("read job config.xml failed")
+		fmt.Fprintf(w, "read job config.xml failed")
+		return
+	}
+	/*
+		root := doc.Root()
+		if root == nil {
+			fmt.Println("can not root")
+			return
+		}
+	*/
+	// parse job config.xml
+	// description
+	eDesc := doc.FindElement("./" + Root + Description)
+	eDesc.SetText(desc)
+	// repositryurl
+	eRepoURL := doc.FindElement("./" + Root + Scm + UsrRemoteConfigs + HudsonPluginsGitUserRemoteConfig + Url)
+	if eRepoURL == nil {
+		fmt.Println("eRepoURL is nil")
+		return
+	}
+	eRepoURL.SetText(repositryurl)
+	// credentialsId
+	eCredentialsid := doc.FindElement("./" + Root + Scm + UsrRemoteConfigs + HudsonPluginsGitUserRemoteConfig + CredentialsId)
+	eCredentialsid.SetText(credentialsid)
+	// branches
+	eBranchesToBuild := doc.FindElement("./" + Root + Scm + Branches + HudsonPluginsGitBranchSpec + Name)
+	eBranchesToBuild.SetText(branchestobuild)
+	// repositryname
+	eRepoName := doc.FindElement("./" + Root + Builders + ComCloudbeesDockerpublishDockerBuilder + RepoName)
+	eRepoName.SetText(repo)
+	// tag
+	eTag := doc.FindElement("./" + Root + Builders + ComCloudbeesDockerpublishDockerBuilder + RepoTag)
+	eTag.SetText(tag)
+	// docker host uri
+	eDockerHostUri := doc.FindElement("./" + Root + Builders + ComCloudbeesDockerpublishDockerBuilder + Server + Uri)
+	eDockerHostUri.SetText(dockerHostUri)
 
+	eDockerRegistryUrl := doc.FindElement("./" + Root + Builders + ComCloudbeesDockerpublishDockerBuilder + Registry + Url)
+	eDockerRegistryUrl.SetText(dockerRegistry)
+	// skippush?
+	eSkipPush := doc.FindElement("./" + Root + Builders + ComCloudbeesDockerpublishDockerBuilder + SkipPush)
+	eSkipPush.SetText(skipPush)
+	// command
+	eCmd := doc.FindElement("./" + Root + Builders + HudsonTasksShell + Command)
+	eCmd.SetText(cmd)
+
+	job_data, err := doc.WriteToString()
+	if err != nil {
+		log.Errorf("write to string failed")
+		fmt.Fprintf(w, "write to string failed")
+		return
+	}
+
+	/*
+			err = doc.WriteToFile("config.etree.xml")
+			if err != nil {
+				fmt.Println("etree write to bytes failed")
+				return
+			}
+		job_data := getFileAsString("config.xml")
+		fmt.Println(job_data)
+		return
+	*/
 	job, err := JenkinsClient.CreateJob(job_data, jobid)
 	if err != nil {
 		fmt.Fprintf(w, err.Error())
