@@ -145,7 +145,7 @@ bool
     "builders": {
         "dockerbuildandpublish":{
             "repositryname": string, // 用户自定义的repo name
-            "tag": string,             // images tag infomation
+            "tag": string,             // images tag infomation, default: latest
             "dockerhosturi": string, // default: tcp://xxxx:xxx
             "dockerregistryurl": string, // http://dhub.yunpro.cn
             "skippush": bool // 是否跳过push到docker registry
