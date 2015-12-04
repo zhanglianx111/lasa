@@ -1,8 +1,9 @@
 package router
 
 import (
-	"github.com/drone/routes"
 	"handlers"
+
+	"github.com/drone/routes"
 )
 
 var Mux *routes.RouteMux
@@ -48,7 +49,7 @@ func Init() {
 	Mux.Post("/api/job/disable/:jobid", handlers.HandlerDisableJob)
 	Mux.Post("/api/job/enable/:jobid", handlers.HandlerEnableJob)
 	Mux.Post("/api/job/rename/:oldjobid/:newjobid", handlers.HandlerRenameJob)
-	Mux.Post("/api/job/startbuild/:jobid", handlers.HandlerBuildJob)
+	Mux.Post("/api/job/build/:jobid", handlers.HandlerBuildJob)
 	Mux.Post("/api/job/stopbuild/:jobid/:number", handlers.HandlerStopBuild)
 	//Mux.Post("/api/job/copy/:from/:newname", handlers.HandlerCopyJob)
 	/* view */
