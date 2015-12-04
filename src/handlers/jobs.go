@@ -25,7 +25,7 @@ import (
 */
 const (
 	// 1
-	Root = "project/"
+	Root = "./project/"
 	// 2
 	Scm      = "scm/"
 	Builders = "builders/"
@@ -50,18 +50,18 @@ const (
 	Command       = "command"       //使用execute shell的命令内容
 	Url           = "url"           //docker registry address or 用户项目源代码仓库地址
 	Description   = "description"   //用户项目的描述
-	DockerHostUri = ""
 
 	BaseCfg = "/Users/zhanglianxiang/workspace/jenkins_api/src/handlers/_tests/config.xml"
 )
 
+/*
 type JobCfg struct {
 	JobName     string `json:jobname`
 	Description string `json:description`
 	Scm         string `json:scm`
 	Build       map[string]interface{}
 }
-
+*/
 /*
 用户自定义参数：
 {
@@ -97,69 +97,22 @@ func HandlerCreateJob(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer r.Body.Close()
-	// get job config
-	desc, _ := js.Get("description").String()
-	// scm
-	repositryurl, _ := js.Get("scm").Get("repositryurl").String()
-	credentialsid, _ := js.Get("scm").Get("credentialsid").String()
-	branchestobuild, _ := js.Get("scm").Get("branchestobuild").String()
-	// builders
-	repo, _ := js.Get("builders").Get("dockerbuildandpublish").Get("repositryname").String()
-	tag, _ := js.Get("builders").Get("dockerbuildandpublish").Get("tag").String()
-	dockerRegistry, _ := js.Get("builders").Get("dockerbuildandpublish").Get("dockerregitstryurl").String()
-	skipPush, _ := js.Get("builders").Get("dockerbuildandpublish").Get("skippush").String()
-	dockerHostUri, _ := js.Get("builders").Get("dockerbuildandpublish").Get("dockerhosturi").String()
-	cmd, _ := js.Get("builders").Get("executeshell").Get("command").String()
 
+	cfg := parseCreateJobBody(js)
+	if cfg == nil {
+		log.Errorf("parse request body failde")
+		fmt.Fprintf(w, "parse request body failde")
+		return
+	}
+	fmt.Println(cfg)
 	doc := etree.NewDocument()
 	if err := doc.ReadFromFile(BaseCfg); err != nil {
 		log.Errorf("read job config.xml failed")
 		fmt.Fprintf(w, "read job config.xml failed")
 		return
 	}
-	/*
-		root := doc.Root()
-		if root == nil {
-			fmt.Println("can not root")
-			return
-		}
-	*/
 	// parse job config.xml
-	// description
-	eDesc := doc.FindElement("./" + Root + Description)
-	eDesc.SetText(desc)
-	// repositryurl
-	eRepoURL := doc.FindElement("./" + Root + Scm + UsrRemoteConfigs + HudsonPluginsGitUserRemoteConfig + Url)
-	if eRepoURL == nil {
-		fmt.Println("eRepoURL is nil")
-		return
-	}
-	eRepoURL.SetText(repositryurl)
-	// credentialsId
-	eCredentialsid := doc.FindElement("./" + Root + Scm + UsrRemoteConfigs + HudsonPluginsGitUserRemoteConfig + CredentialsId)
-	eCredentialsid.SetText(credentialsid)
-	// branches
-	eBranchesToBuild := doc.FindElement("./" + Root + Scm + Branches + HudsonPluginsGitBranchSpec + Name)
-	eBranchesToBuild.SetText(branchestobuild)
-	// repositryname
-	eRepoName := doc.FindElement("./" + Root + Builders + ComCloudbeesDockerpublishDockerBuilder + RepoName)
-	eRepoName.SetText(repo)
-	// tag
-	eTag := doc.FindElement("./" + Root + Builders + ComCloudbeesDockerpublishDockerBuilder + RepoTag)
-	eTag.SetText(tag)
-	// docker host uri
-	eDockerHostUri := doc.FindElement("./" + Root + Builders + ComCloudbeesDockerpublishDockerBuilder + Server + Uri)
-	eDockerHostUri.SetText(dockerHostUri)
-
-	eDockerRegistryUrl := doc.FindElement("./" + Root + Builders + ComCloudbeesDockerpublishDockerBuilder + Registry + Url)
-	eDockerRegistryUrl.SetText(dockerRegistry)
-	// skippush?
-	eSkipPush := doc.FindElement("./" + Root + Builders + ComCloudbeesDockerpublishDockerBuilder + SkipPush)
-	eSkipPush.SetText(skipPush)
-	// command
-	eCmd := doc.FindElement("./" + Root + Builders + HudsonTasksShell + Command)
-	eCmd.SetText(cmd)
-
+	updateJobConfigXml(doc, cfg)
 	job_data, err := doc.WriteToString()
 	if err != nil {
 		log.Errorf("write to string failed")
@@ -167,16 +120,6 @@ func HandlerCreateJob(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	/*
-			err = doc.WriteToFile("config.etree.xml")
-			if err != nil {
-				fmt.Println("etree write to bytes failed")
-				return
-			}
-		job_data := getFileAsString("config.xml")
-		fmt.Println(job_data)
-		return
-	*/
 	job, err := JenkinsClient.CreateJob(job_data, jobid)
 	if err != nil {
 		fmt.Fprintf(w, err.Error())
@@ -517,3 +460,113 @@ func HandlerCopyJob(w http.ResponseWriter, r *http.Request) {
 	}
 }
 */
+
+func parseCreateJobBody(js *simplejs.Json) map[string]string {
+	m := make(map[string]string)
+
+	if desc, err := js.Get("description").String(); err != nil {
+		return nil
+	} else {
+		m["desc"] = desc
+	}
+
+	// scm
+	scm := js.Get("scm")
+	if scm == nil {
+		return nil
+	}
+
+	if repositryrUrl, err := scm.Get("repositryurl").String(); err != nil {
+		return nil
+	} else {
+		m["repositryurl"] = repositryrUrl
+	}
+
+	if credentialsId, err := scm.Get("credentialsid").String(); err != nil {
+		return nil
+	} else {
+		m["credentialsid"] = credentialsId
+	}
+
+	if branchesToBuild, err := scm.Get("branchestobuild").String(); err != nil {
+		return nil
+	} else {
+		m["branchestobuild"] = branchesToBuild
+	}
+	// builders
+	bdrs := js.Get("builders").Get("dockerbuildandpublish")
+	if bdrs == nil {
+		return nil
+	}
+
+	if repoName, err := bdrs.Get("repositryname").String(); err != nil {
+		return nil
+	} else {
+		m["repositryname"] = repoName
+	}
+
+	if tag, err := bdrs.Get("tag").String(); err != nil {
+		return nil
+	} else {
+		m["tag"] = tag
+	}
+
+	if dockerRegistryUrl, err := bdrs.Get("dockerregitstryurl").String(); err != nil {
+		return nil
+	} else {
+		m["dockerregitstryurl"] = dockerRegistryUrl
+	}
+
+	if dockerHostUri, err := bdrs.Get("dockerhosturi").String(); err != nil {
+		return nil
+	} else {
+		m["dockerhosturi"] = dockerHostUri
+	}
+
+	if skipPush, err := bdrs.Get("skippush").String(); err != nil {
+		return nil
+	} else {
+		m["skippush"] = skipPush
+	}
+
+	if cmd, err := js.Get("builders").Get("executeshell").Get("command").String(); err != nil {
+		return nil
+	} else {
+		m["command"] = cmd
+	}
+
+	return m
+}
+
+func updateJobConfigXml(doc *etree.Document, cfg map[string]string) {
+	eDesc := doc.FindElement(Root + Description)
+	eDesc.SetText(cfg["desc"])
+
+	eRepoURL := doc.FindElement(Root + Scm + UsrRemoteConfigs + HudsonPluginsGitUserRemoteConfig + Url)
+	eRepoURL.SetText(cfg["repositryurl"])
+
+	eCredentialsid := doc.FindElement(Root + Scm + UsrRemoteConfigs + HudsonPluginsGitUserRemoteConfig + CredentialsId)
+	eCredentialsid.SetText(cfg["credentialsid"])
+
+	eBranchesToBuild := doc.FindElement(Root + Scm + Branches + HudsonPluginsGitBranchSpec + Name)
+	eBranchesToBuild.SetText(cfg["branchestobuild"])
+
+	eRepoName := doc.FindElement(Root + Builders + ComCloudbeesDockerpublishDockerBuilder + RepoName)
+	eRepoName.SetText(cfg["repositryname"])
+
+	eTag := doc.FindElement(Root + Builders + ComCloudbeesDockerpublishDockerBuilder + RepoTag)
+	eTag.SetText(cfg["tag"])
+
+	eDockerHostUri := doc.FindElement(Root + Builders + ComCloudbeesDockerpublishDockerBuilder + Server + Uri)
+	eDockerHostUri.SetText(cfg["dockerhosturi"])
+
+	eDockerRegistryUrl := doc.FindElement(Root + Builders + ComCloudbeesDockerpublishDockerBuilder + Registry + Url)
+	eDockerRegistryUrl.SetText(cfg["dockerregitstryurl"])
+
+	eSkipPush := doc.FindElement(Root + Builders + ComCloudbeesDockerpublishDockerBuilder + SkipPush)
+	eSkipPush.SetText(cfg["skippush"])
+
+	eCmd := doc.FindElement(Root + Builders + HudsonTasksShell + Command)
+	eCmd.SetText(cfg["command"])
+
+}
