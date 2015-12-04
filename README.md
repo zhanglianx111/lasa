@@ -139,7 +139,7 @@ bool
     "description": string,
     "scm": {
         "repositryurl": string,
-        "credentialsid": string,
+        "credentialsid": string, //md5? 544d6bd6-d4f8-4ef0-8411-8b3c211affe2
         "branchestobuild": string
         }
     "builders": {
