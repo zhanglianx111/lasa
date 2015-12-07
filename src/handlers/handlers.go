@@ -23,15 +23,15 @@ type JenkinsInfo struct {
 	NodesName []string `json:nodeName`
 }
 
-func Init() {
+func init() {
 	log.SetLevel(log.DebugLevel)
-	// do a deep copy for etree of job  config.xml
+	// do a deep copy for etree of job config.xml
 	JobConfig = etree.NewDocument()
 	if err := JobConfig.ReadFromFile(BaseCfg); err != nil {
 		return
 	}
 	for {
-		JenkinsClient = GetJenkinsClient()
+		JenkinsClient = getJenkinsClient()
 		if JenkinsClient == nil {
 			time.Sleep(10)
 			continue
@@ -41,7 +41,7 @@ func Init() {
 	}
 }
 
-func GetJenkinsClient() *gojenkins.Jenkins {
+func getJenkinsClient() *gojenkins.Jenkins {
 	var jenkinsHost, jenkinsPort string
 	if os.Getenv("ENVIRONMENT") == "production" {
 		jenkinsHost = os.Getenv("JENKINS_HOST")
@@ -57,10 +57,10 @@ func GetJenkinsClient() *gojenkins.Jenkins {
 	url := "http://" + jenkinsHost + ":" + jenkinsPort
 	jenkins, err := gojenkins.CreateJenkins(url, "admin", "admin").Init()
 	if err != nil {
-		log.Errorf("connecting jenkins server:%s:%s failed br %s", jenkinsHost, jenkinsPort, err)
+		log.Errorf("connecting jenkins server:%s:%s failed with error:%s", jenkinsHost, jenkinsPort, err)
 		return nil
 	}
-	log.Infof("connecting jenkins server:%s:%s is OK!", jenkinsHost, jenkinsPort)
+	log.Infof("connect jenkins server:%s:%s is OK!", jenkinsHost, jenkinsPort)
 	return jenkins
 }
 

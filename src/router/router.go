@@ -8,8 +8,7 @@ import (
 
 var Mux *routes.RouteMux
 
-func Init() {
-	handlers.Init()
+func init() {
 	Mux = routes.New()
 	/* method GET */
 	/* jenkins */

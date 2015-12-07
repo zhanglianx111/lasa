@@ -1,22 +1,14 @@
 package main
 
 import (
-	"router"
 	"net/http"
+	"router"
 	"runtime"
 )
 
-
-func Init() {
-	router.Init()
-}
-
-func main() {	
-	Init()
+func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 	http.Handle("/", router.Mux)
-	http.ListenAndServe(":3000", nil)	
+	http.ListenAndServe(":3000", nil)
 	return
 }
-
-
