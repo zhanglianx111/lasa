@@ -51,7 +51,6 @@ const (
 	Url           = "url"           //docker registry address or 用户项目源代码仓库地址
 	Description   = "description"   //用户项目的描述
 
-	BaseCfg = "/Users/zhanglianxiang/workspace/jenkins_api/src/handlers/_tests/config.xml"
 )
 
 /*
@@ -105,12 +104,15 @@ func HandlerCreateJob(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Println(cfg)
-	doc := etree.NewDocument()
-	if err := doc.ReadFromFile(BaseCfg); err != nil {
-		log.Errorf("read job config.xml failed")
-		fmt.Fprintf(w, "read job config.xml failed")
-		return
-	}
+	/*
+		doc := etree.NewDocument()
+		if err := doc.ReadFromFile(BaseCfg); err != nil {
+			log.Errorf("read job config.xml failed")
+			fmt.Fprintf(w, "read job config.xml failed")
+			return
+		}
+	*/
+	doc := JobConfig.Copy()
 	// parse job config.xml
 	updateJobConfigXml(doc, cfg)
 	job_data, err := doc.WriteToString()

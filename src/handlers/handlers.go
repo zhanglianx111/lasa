@@ -10,14 +10,35 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/bndr/gojenkins"
 	//"github.com/zhanglianx111/gojenkins"
+	"github.com/beevik/etree"
 )
 
 var JenkinsClient *gojenkins.Jenkins
+var JobConfig *etree.Document
+var BaseCfg = "/Users/zhanglianxiang/workspace/jenkins_api/src/handlers/_tests/config.xml"
 
 type JenkinsInfo struct {
 	Jobs      []string `json:jobs`
 	Mode      string   `json:mode`
 	NodesName []string `json:nodeName`
+}
+
+func Init() {
+	log.SetLevel(log.DebugLevel)
+	// do a deep copy for etree of job  config.xml
+	JobConfig = etree.NewDocument()
+	if err := JobConfig.ReadFromFile(BaseCfg); err != nil {
+		return
+	}
+	for {
+		JenkinsClient = GetJenkinsClient()
+		if JenkinsClient == nil {
+			time.Sleep(10)
+			continue
+		} else {
+			break
+		}
+	}
 }
 
 func GetJenkinsClient() *gojenkins.Jenkins {
@@ -41,19 +62,6 @@ func GetJenkinsClient() *gojenkins.Jenkins {
 	}
 	log.Infof("connecting jenkins server:%s:%s is OK!", jenkinsHost, jenkinsPort)
 	return jenkins
-}
-
-func Init() {
-	log.SetLevel(log.DebugLevel)
-	for {
-		JenkinsClient = GetJenkinsClient()
-		if JenkinsClient == nil {
-			time.Sleep(10)
-			continue
-		} else {
-			break
-		}
-	}
 }
 
 func HandlerDefault(w http.ResponseWriter, r *http.Request) {
