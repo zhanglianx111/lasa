@@ -17,6 +17,8 @@ func HandlerGetInfo(w http.ResponseWriter, r *http.Request) {
 	var jobs []Job
 	var views []interface{}
 
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origi", "*")
 	info, err := JenkinsClient.Info()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -54,6 +56,5 @@ func HandlerGetInfo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonData)
 }

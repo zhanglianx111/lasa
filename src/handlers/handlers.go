@@ -2,20 +2,22 @@ package handlers
 
 import (
 	"fmt"
-
 	"net/http"
-	"os"
+	"path/filepath"
+	"strconv"
 	"time"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/bndr/gojenkins"
 	//"github.com/zhanglianx111/gojenkins"
 	"github.com/beevik/etree"
+	"github.com/tsuru/config"
 )
 
 var JenkinsClient *gojenkins.Jenkins
 var JobConfig *etree.Document
 var BaseCfg = "/Users/zhanglianxiang/workspace/jenkins_api/src/handlers/_tests/config.xml"
+var ConfigurationPath = "config/config.yml"
 
 type JenkinsInfo struct {
 	Jobs      []string `json:jobs`
@@ -42,22 +44,34 @@ func init() {
 }
 
 func getJenkinsClient() *gojenkins.Jenkins {
-	var jenkinsHost, jenkinsPort string
-	if os.Getenv("ENVIRONMENT") == "production" {
-		jenkinsHost = os.Getenv("JENKINS_HOST")
-		jenkinsPort = os.Getenv("JENKINS_PORT")
-		if jenkinsHost == "" || jenkinsPort == "" {
-			return nil
-		}
-	} else {
-		jenkinsHost = "10.10.11.111"
-		jenkinsPort = "8080"
+	var jenkinsHost string
+	var jenkinsPort int
+	configAbsPath, err := filepath.Abs(ConfigurationPath)
+	if err != nil {
+		log.Errorf(err.Error())
+		return nil
+	}
+	err = config.ReadAndWatchConfigFile(configAbsPath)
+	if err != nil {
+		log.Errorf("read app configuration file failed", err.Error())
+		return nil
+	}
+	jenkinsHost, err = config.GetString("server:host")
+	if err != nil {
+		log.Errorf(err.Error())
+		return nil
 	}
 
-	url := "http://" + jenkinsHost + ":" + jenkinsPort
+	jenkinsPort, err = config.GetInt("server:port")
+	if err != nil {
+		log.Errorf(err.Error())
+		return nil
+	}
+
+	url := "http://" + jenkinsHost + ":" + strconv.Itoa(jenkinsPort)
 	jenkins, err := gojenkins.CreateJenkins(url, "admin", "admin").Init()
 	if err != nil {
-		log.Errorf("connecting jenkins server:%s:%s failed with error:%s", jenkinsHost, jenkinsPort, err)
+		log.Errorf("connecting jenkins server:%s:%d failed with error:%s", jenkinsHost, jenkinsPort, err)
 		return nil
 	}
 	log.Infof("connect jenkins server:%s:%s is OK!", jenkinsHost, jenkinsPort)
@@ -65,5 +79,8 @@ func getJenkinsClient() *gojenkins.Jenkins {
 }
 
 func HandlerDefault(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "this is jenkins api server!!!")
+	if r.Method != "GET" {
+		fmt.Println("Error method:", r.Method)
+	}
+	http.Redirect(w, r, "/login", http.StatusFound)
 }

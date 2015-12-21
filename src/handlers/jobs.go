@@ -6,11 +6,13 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
+	"text/template"
 	"utils"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/beevik/etree"
 	simplejs "github.com/bitly/go-simplejson"
+	"github.com/go-martini/martini"
 )
 
 //job configuration path
@@ -84,14 +86,18 @@ type JobCfg struct {
     }
 }
 
-*/
 
 func HandlerCreateJob(w http.ResponseWriter, r *http.Request) {
 	params := r.URL.Query()
 	jobid := params.Get(":jobid")
+	fmt.Println("job id is: ", jobid)
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
 	js, err := simplejs.NewFromReader(r.Body)
 	if err != nil {
 		log.Errorf(err.Error())
+		log.Errorf("read request body failed")
 		fmt.Fprintf(w, err.Error())
 		return
 	}
@@ -99,11 +105,10 @@ func HandlerCreateJob(w http.ResponseWriter, r *http.Request) {
 
 	cfg := parseCreateJobBody(js)
 	if cfg == nil {
-		log.Errorf("parse request body failde")
-		fmt.Fprintf(w, "parse request body failde")
+		log.Errorf("parse request body failed")
+		fmt.Fprintf(w, "parse request body failed")
 		return
 	}
-	fmt.Println(cfg)
 	/*
 		doc := etree.NewDocument()
 		if err := doc.ReadFromFile(BaseCfg); err != nil {
@@ -111,7 +116,8 @@ func HandlerCreateJob(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, "read job config.xml failed")
 			return
 		}
-	*/
+*/
+/*
 	doc := JobConfig.Copy()
 	// parse job config.xml
 	updateJobConfigXml(doc, cfg)
@@ -124,6 +130,7 @@ func HandlerCreateJob(w http.ResponseWriter, r *http.Request) {
 
 	job, err := JenkinsClient.CreateJob(job_data, jobid)
 	if err != nil {
+		log.Errorf("create job: %s failed", jobid)
 		fmt.Fprintf(w, err.Error())
 		return
 	}
@@ -140,14 +147,68 @@ func HandlerCreateJob(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonData)
 }
+*/
+func HandlerCreateJob(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "GET" {
+		tCreateJob, err := template.ParseFiles("./views/createJob.html")
+		if err != nil {
+			fmt.Println(w, err.Error())
+			return
+		}
+		tCreateJob.Execute(w, nil)
+	} else {
+		js, err := simplejs.NewFromReader(r.Body)
+		if err != nil {
+			log.Errorf(err.Error())
+			log.Errorf("read request body failed")
+			fmt.Fprintf(w, err.Error())
+			return
+		}
+		defer r.Body.Close()
+		fmt.Println(js)
+		jobid, cfg := parseCreateJobBody(js)
+		if cfg == nil {
+			log.Errorf("parse request body failed")
+			fmt.Fprintf(w, "parse request body failed")
+			return
+		}
 
-func HandlerDeleteJob(w http.ResponseWriter, r *http.Request) {
-	params := r.URL.Query()
-	jobid := params.Get(":jobid")
+		doc := JobConfig.Copy()
+		// parse job config.xml
+		updateJobConfigXml(doc, cfg)
+		job_data, err := doc.WriteToString()
+		if err != nil {
+			log.Errorf("write to string failed")
+			fmt.Fprintf(w, "write to string failed")
+			return
+		}
 
+		job, err := JenkinsClient.CreateJob(job_data, jobid)
+		if err != nil {
+			log.Errorf("create job: %s failed", jobid)
+			fmt.Fprintf(w, err.Error())
+			return
+		}
+
+		//creating job is ok
+		log.Debugf("job base:%s, job raw:", job.Base, job.Raw)
+		data := map[string]string{"name": job.Raw.Name} // "description": job.Raw.Description,
+		// "displayName": job.Raw.DisplayName,
+		// "url":         job.Raw.URL
+
+		jsonData, err := json.Marshal(data)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.Write(jsonData)
+	}
+}
+func HandlerDeleteJob(params martini.Params, w http.ResponseWriter, r *http.Request) {
+	jobid := params["jobid"]
 	log.Debugf("delete job:%s", jobid)
 	_, err := JenkinsClient.DeleteJob(jobid)
 	if err != nil {
@@ -165,9 +226,8 @@ func HandlerDeleteJob(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonData)
 }
 
-func HandlerDisableJob(w http.ResponseWriter, r *http.Request) {
-	jobid := r.URL.Query().Get(":jobid")
-
+func HandlerDisableJob(params martini.Params, w http.ResponseWriter, r *http.Request) {
+	jobid := params["jobid"]
 	log.Debugf("disable job: %s", jobid)
 	job, err := JenkinsClient.GetJob(jobid)
 	if err != nil {
@@ -186,8 +246,8 @@ func HandlerDisableJob(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func HandlerEnableJob(w http.ResponseWriter, r *http.Request) {
-	jobid := r.URL.Query().Get(":jobid")
+func HandlerEnableJob(params martini.Params, w http.ResponseWriter, r *http.Request) {
+	jobid := params["jobid"]
 	log.Debugf("enable job:%s", jobid)
 	job, err := JenkinsClient.GetJob(jobid)
 	if err != nil {
@@ -206,10 +266,9 @@ func HandlerEnableJob(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func HandlerRenameJob(w http.ResponseWriter, r *http.Request) {
-	params := r.URL.Query()
-	oldName := params.Get(":oldjobid")
-	newName := params.Get(":newjobid")
+func HandlerRenameJob(params martini.Params, w http.ResponseWriter, r *http.Request) {
+	oldName := params["oldjobid"]
+	newName := params["newjobid"]
 	if oldName == "" || newName == "" {
 		fmt.Fprintf(w, "oldname or newname is empty")
 		return
@@ -224,9 +283,11 @@ func HandlerRenameJob(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func HandlerGetJob(w http.ResponseWriter, r *http.Request) {
-	params := r.URL.Query()
-	jobid := params.Get(":jobid")
+func HandlerGetJob(params martini.Params, w http.ResponseWriter, r *http.Request) {
+	jobid := params[":jobid"]
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	job, err := JenkinsClient.GetJob(jobid)
 	if err != nil {
@@ -242,12 +303,14 @@ func HandlerGetJob(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonData)
 }
 
 func HandlerGetAllJobs(w http.ResponseWriter, r *http.Request) {
 	var jobsData []map[string]interface{}
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
 	jobs, _ := JenkinsClient.GetAllJobs()
 	for _, job := range jobs {
 		fmt.Println(job)
@@ -261,7 +324,6 @@ func HandlerGetAllJobs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonData)
 }
 
@@ -275,9 +337,9 @@ func getFileAsString(path string) string {
 	return string(buf)
 }
 
-func HandlerGetAllBuildIds(w http.ResponseWriter, r *http.Request) {
+func HandlerGetAllBuildIds(params martini.Params, w http.ResponseWriter, r *http.Request) {
 	bs := []map[string]interface{}{}
-	jobid := r.URL.Query().Get(":jobid")
+	jobid := params["jobid"]
 	if jobid == "" {
 		fmt.Fprintf(w, "jobid is empty")
 		return
@@ -308,8 +370,8 @@ func HandlerGetAllBuildIds(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonData)
 }
 
-func HandlerJobRunning(w http.ResponseWriter, r *http.Request) {
-	jobid := r.URL.Query().Get(":jobid")
+func HandlerJobRunning(params martini.Params, w http.ResponseWriter, r *http.Request) {
+	jobid := params["jobid"]
 	if jobid == "" {
 		fmt.Fprintf(w, "jobid is empty")
 		return
@@ -334,9 +396,8 @@ func HandlerJobRunning(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func HandlerBuildJob(w http.ResponseWriter, r *http.Request) {
-	jobid := r.URL.Query().Get(":jobid")
-
+func HandlerBuildJob(params martini.Params, w http.ResponseWriter, r *http.Request) {
+	jobid := params["jobid"]
 	job, err := JenkinsClient.GetJob(jobid)
 	if err != nil {
 		fmt.Fprintf(w, "get job:%s failed", jobid)
@@ -368,10 +429,9 @@ func HandlerBuildJob(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func HandlerStopBuild(w http.ResponseWriter, r *http.Request) {
-	q := r.URL.Query()
-	jobid := q.Get(":jobid")
-	number := q.Get(":number")
+func HandlerStopBuild(params martini.Params, w http.ResponseWriter, r *http.Request) {
+	jobid := params["jobid"]
+	number := params["number"]
 	n, err := strconv.ParseInt(number, 10, 64)
 	if err != nil {
 		log.Errorf("string to int64 faild")
@@ -394,10 +454,9 @@ func HandlerStopBuild(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func HandlerBuildConsoleOutput(w http.ResponseWriter, r *http.Request) {
-	q := r.URL.Query()
-	jobid := q.Get(":jobid")
-	number := q.Get(":number")
+func HandlerBuildConsoleOutput(params martini.Params, w http.ResponseWriter, r *http.Request) {
+	jobid := params["jobid"]
+	number := params["number"]
 	fmt.Println(number)
 	n, err := strconv.ParseInt(number, 10, 64)
 	if err != nil {
@@ -417,24 +476,35 @@ func HandlerBuildConsoleOutput(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func HandlerJobConfig(w http.ResponseWriter, r *http.Request) {
-	jobid := r.URL.Query().Get(":jobid")
+func HandlerJobConfig(params martini.Params, w http.ResponseWriter, r *http.Request) {
+	jobid := params["jobid"]
 	job, err := JenkinsClient.GetJob(jobid)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	config, err := job.GetConfig()
+	//config, err = job.GetConfig()
+	_, err = job.GetConfig()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	fmt.Println("config:", config)
-	w.Header().Set("Content-Type", "application/xml")
-	fmt.Fprintf(w, config)
-	return
+	// for test
+	data := map[string]string{"a": jobid, "b": "b"}
+	jdata, _ := json.Marshal(data)
+	//w.Header().Set("Content-Type", "application/xml")
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jdata)
+	/*
+		tJobConfig, err := template.ParseFiles("./views/jobConfig.html")
+		if err != nil {
+			fmt.Fprintf(w, err.Error())
+			return
+		}
+		fmt.Println("joconfig")
+		tJobConfig.Execute(w, nil)
+		return
+	*/
 }
 
 /*
@@ -463,81 +533,111 @@ func HandlerCopyJob(w http.ResponseWriter, r *http.Request) {
 }
 */
 
-func parseCreateJobBody(js *simplejs.Json) map[string]string {
+func parseCreateJobBody(js *simplejs.Json) (string, map[string]string) {
 	m := make(map[string]string)
-
+	jobname, err := js.Get("jobname").String()
+	if err != nil {
+		log.Errorf("parse \"jobname\" failed")
+		return "", nil
+	}
+	/*
+		else {
+			m["jobname"] = jobname
+			fmt.Println(jobname)
+		}*/
 	if desc, err := js.Get("description").String(); err != nil {
-		return nil
+		log.Errorf("parse \"description\" failed")
+		return "", nil
 	} else {
 		m["desc"] = desc
 	}
 
-	// scm
-	scm := js.Get("scm")
-	if scm == nil {
-		return nil
-	}
-
-	if repositryrUrl, err := scm.Get("repositryurl").String(); err != nil {
-		return nil
+	if repositryrUrl, err := js.Get("repositryurl").String(); err != nil {
+		//log.Errorf("parse \"repositryurl\" failed")
+		log.Errorf(err.Error())
+		return "", nil
 	} else {
 		m["repositryurl"] = repositryrUrl
 	}
-
-	if credentialsId, err := scm.Get("credentialsid").String(); err != nil {
-		return nil
+	/*
+		if credentialsId, err := js.Get("credentialsid").String(); err != nil {
+			log.Errorf("parse \"credentialsid\" failed")
+			return nil
+		} else {
+			m["credentialsid"] = credentialsId
+		}
+	*/
+	if usr, err := js.Get("username").String(); err != nil {
+		log.Errorf("parse \"username\" failed")
+		return "", nil
 	} else {
-		m["credentialsid"] = credentialsId
+		m["username"] = usr
 	}
 
-	if branchesToBuild, err := scm.Get("branchestobuild").String(); err != nil {
-		return nil
+	if passwd, err := js.Get("password").String(); err != nil {
+		log.Errorf("parse \"password\" failed")
+		return "", nil
+	} else {
+		m["password"] = passwd
+	}
+
+	if branchesToBuild, err := js.Get("branches").String(); err != nil {
+		log.Errorf("parse \"branches\" failed")
+		return "", nil
 	} else {
 		m["branchestobuild"] = branchesToBuild
 	}
-	// builders
-	bdrs := js.Get("builders").Get("dockerbuildandpublish")
-	if bdrs == nil {
-		return nil
-	}
-
-	if repoName, err := bdrs.Get("repositryname").String(); err != nil {
-		return nil
+	/*
+		// builders
+		bdrs := js.Get("builders").Get("dockerbuildandpublish")
+		if bdrs == nil {
+			log.Errorf("parse \"dockerbuildandpublish\" failed")
+			return nil
+		}
+	*/
+	if repoName, err := js.Get("repositryname").String(); err != nil {
+		log.Errorf("parse \"repositryname\" failed")
+		return "", nil
 	} else {
 		m["repositryname"] = repoName
 	}
 
-	if tag, err := bdrs.Get("tag").String(); err != nil {
-		return nil
+	if tag, err := js.Get("tag").String(); err != nil {
+		log.Errorf("parse \"tag\" failed")
+		return "", nil
 	} else {
 		m["tag"] = tag
 	}
 
-	if dockerRegistryUrl, err := bdrs.Get("dockerregitstryurl").String(); err != nil {
-		return nil
+	if dockerRegistryUrl, err := js.Get("dockerregistryurl").String(); err != nil {
+		log.Errorf("parse \"dockerregistryurl\" failed")
+		return "", nil
 	} else {
-		m["dockerregitstryurl"] = dockerRegistryUrl
+		m["dockerregistryurl"] = dockerRegistryUrl
 	}
 
-	if dockerHostUri, err := bdrs.Get("dockerhosturi").String(); err != nil {
-		return nil
+	if dockerHostUri, err := js.Get("dockerhosturi").String(); err != nil {
+		log.Errorf("parse \"dockerhosturi\" failed")
+		return "", nil
 	} else {
 		m["dockerhosturi"] = dockerHostUri
 	}
 
-	if skipPush, err := bdrs.Get("skippush").String(); err != nil {
-		return nil
+	if skipPush, err := js.Get("skippush").String(); err != nil {
+		log.Errorf("parse \"skippush\" failed")
+		return "", nil
 	} else {
 		m["skippush"] = skipPush
 	}
 
-	if cmd, err := js.Get("builders").Get("executeshell").Get("command").String(); err != nil {
-		return nil
+	if cmd, err := js.Get("command").String(); err != nil {
+		log.Errorf("parse \"command\" failed")
+		return "", nil
 	} else {
 		m["command"] = cmd
 	}
 
-	return m
+	return jobname, m
 }
 
 func updateJobConfigXml(doc *etree.Document, cfg map[string]string) {
@@ -563,7 +663,7 @@ func updateJobConfigXml(doc *etree.Document, cfg map[string]string) {
 	eDockerHostUri.SetText(cfg["dockerhosturi"])
 
 	eDockerRegistryUrl := doc.FindElement(Root + Builders + ComCloudbeesDockerpublishDockerBuilder + Registry + Url)
-	eDockerRegistryUrl.SetText(cfg["dockerregitstryurl"])
+	eDockerRegistryUrl.SetText(cfg["dockerregistryurl"])
 
 	eSkipPush := doc.FindElement(Root + Builders + ComCloudbeesDockerpublishDockerBuilder + SkipPush)
 	eSkipPush.SetText(cfg["skippush"])
