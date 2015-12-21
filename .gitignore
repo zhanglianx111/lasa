@@ -3,3 +3,4 @@ darwin_amd64
 src/darwin_amd64
 tags
 */.DS_Store
+src/static/bootstrap-3.3.5
