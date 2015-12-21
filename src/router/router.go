@@ -15,6 +15,10 @@ func init() {
 	/* method GET */
 	/* jenkins */
 	Routers.Get("/api/info", handlers.HandlerGetInfo)
+	/* register */
+	Routers.Get("/register", handlers.HandlerRegister)
+	Routers.Post("/register", handlers.HandlerRegister)
+
 	/* login */
 	Routers.Get("/login", handlers.HandlerLogin)
 	Routers.Post("/login", handlers.HandlerLogin)
@@ -50,7 +54,9 @@ func init() {
 	//Routers.Get("/api///")
 	/* method POST */
 	/* job */
-	Routers.Post("/api/job/create/:jobid", handlers.HandlerCreateJob)
+	//Routers.Post("/api/job/create/:jobid", handlers.HandlerCreateJob)
+	Routers.Get("/createjob", handlers.HandlerCreateJob)
+	Routers.Post("/createjob", handlers.HandlerCreateJob)
 	Routers.Post("/api/job/delete/:jobid", handlers.HandlerDeleteJob)
 	Routers.Post("/api/job/disable/:jobid", handlers.HandlerDisableJob)
 	Routers.Post("/api/job/enable/:jobid", handlers.HandlerEnableJob)
