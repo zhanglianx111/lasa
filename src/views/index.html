@@ -120,26 +120,19 @@
               <tbody id="tbody"></tbody>
             </table>
           </div>
+
           <!--
-          <a href="#myModal" role="button" class="btn" data-toggle="modal">Launch demo modal</a>
-          -->
-      <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-          <h3 id="myModalLabel">Modal header</h3>
-        </div>
-        <div class="modal-body">
+          <div class="modal-body">
           <form id="myForm" method="post">
           <input type="hidden" value="hello" id="myField">
           <button id="myFormSubmit" type="submit">Submit</button>
           </form><a href="#myModal" role="button" class="btn btn-default" data-toggle="modal">Launch demo modal</a>
-
           <div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-header">
                   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h3 id="myModalLabel">Modal header</h3>
+                    <h3 id="myModalLabel">Job Configuration</h3>
                 </div>
                 <div class="modal-body">
                   <p>One fine body…</p>
@@ -152,14 +145,13 @@
             </div>
           </div>
         </div>
-        <div class="modal-footer">
-          <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-          <button class="btn btn-primary">Save changes</button>
+
+        -->
+        <div id="test">
         </div>
-      </div>
-        </div>
-      </div>
-    </div>
+
+
+
     <script>
         function mydelete(a) {
           var p = $(a).parent().parent().parent().parent().parent();
@@ -174,13 +166,15 @@
               eJobTable.deleteRow(trId);
               */
               document.location.reload(true);
-              });
+          });
         }
 
         function mybuild(a) {
           var p = $(a).parent().parent().parent().parent().parent();
           var jobname = p.children()[1].innerHTML;
-          $.post("http://127.0.0.1:3000/api/job/build/" + jobname, function success() {console.log("build ok")});
+          $.post("http://127.0.0.1:3000/api/job/build/" + jobname, function success() {
+              console.log("build ok");
+              });
         }
 
         function jobconfig(a) {
@@ -188,11 +182,11 @@
           var jobname = p.children()[1].innerHTML;
           $.get("http://127.0.0.1:3000/api/job/config/"+ jobname, function(response, status, xhr){
               console.log("get job config ok:" + jobname);
-              console.log(response.a, response.b);
-              console.log(status);
-
-              });
+              document.getElementById("test").innerHTML = response;
+              $('#myModal').modal();
+         });
         }
+
     </script>
     <!-- Bootstrap core JavaScript
     ================================================== -->

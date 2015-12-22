@@ -74,7 +74,7 @@ func getJenkinsClient() *gojenkins.Jenkins {
 		log.Errorf("connecting jenkins server:%s:%d failed with error:%s", jenkinsHost, jenkinsPort, err)
 		return nil
 	}
-	log.Infof("connect jenkins server:%s:%s is OK!", jenkinsHost, jenkinsPort)
+	log.Infof("connect jenkins server:%s:%d is OK!", jenkinsHost, jenkinsPort)
 	return jenkins
 }
 
