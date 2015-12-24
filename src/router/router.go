@@ -31,6 +31,7 @@ func init() {
 	Routers.Get("/api/job/isrunning/:jobid", handlers.HandlerJobRunning)
 	Routers.Get("/api/job/:jobid/allbuilds", handlers.HandlerGetAllBuildIds)
 	Routers.Get("/api/job/config/:jobid", handlers.HandlerJobConfig)
+	Routers.Post("/api/job/config/:jobid", handlers.HandlerJobConfig)
 	Routers.Get("/api/job/buildlog/:jobid/:number", handlers.HandlerBuildConsoleOutput)
 	/* node */
 	Routers.Get("/api/node/allnodes", handlers.HandlerGetAllNodes)

@@ -115,21 +115,45 @@
               <label for="repositryUrl">项目地址</label>
               <input type="text" class="form-control" id="repositryUrl" placeholder="项目地址">
               <p class="help-block">Example block-level help text here.</p>
+              <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#credent">认证</button>
             </div>
              <div><br></div>
-            <div class="form-group">
-              <label for="userName">用户名</label>
-              <label class="sr-only" for="userName">Username</label>
-              <input type="text" class="form-control" id="userName" placeholder="Username">
-              <p class="help-block">登录代码库的用户名</p>
-            </div>
-            <div class="form-group">
-              <label for="password">密码</label>
-              <label class="sr-only" for="password">Password</label>
-              <input type="password" class="form-control" id="password" placeholder="Password">
-              <p class="help-block">登录代码库的密码</p>
-            </div>
-             <div><br></div>
+            <!-- for git user and password crendentials -->
+            <div id="credent" class="modal fade" tabindex="-1" role="dialog">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">添加认证</h4>
+                  </div>
+                  <div class="modal-body">
+                    <div class="form-group">
+                      <label for="userName">用户名</label>
+                      <label class="sr-only" for="userName">Username</label>
+                      <input type="text" class="form-control" id="userName" placeholder="Username">
+                      <p class="help-block">登录代码库的用户名</p>
+                    </div>
+                    <div class="form-group">
+                      <label for="password">密码</label>
+                      <label class="sr-only" for="password">Password</label>
+                      <input type="password" class="form-control" id="password" placeholder="Password">
+                      <p class="help-block">登录代码库的密码</p>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" onclick="credent()" class="btn btn-primary">添加</button>
+                    <script>
+                      function credent()
+                      {
+                        console.log("xxx");
+                      }
+                    </script>
+                  </div>
+                </div><!-- /.modal-content -->
+              </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+
             <!-- 构建分支 -->
              <div class="form-group">
               <label for="branches">构建分支</label>
@@ -153,18 +177,18 @@
             </div>
             <div><br></div>
             <div class="form-group">
-              <lable>Skip Push</lable>
+              <label>Skip Push</label>
               <input type="checkbox" onclick="check()" value="false" id="skippush">
               <script>
                 function check()
                 {
-                  console.log($("#skippush").attr("value"))
+                  console.log($("#skippush").attr("value"));
                   if ($("#skippush").attr("value") == "false") {
-                    $("#skippush").attr("value", "true") 
+                    $("#skippush").attr("value", "true");
                   } else {
-                    $("#skippush").attr("value", "false")
+                    $("#skippush").attr("value", "false");
                   }
-                } 
+                }
               </script>
             </div>
             <div><br></div>
@@ -197,9 +221,6 @@
             <div><br></div>
             <a class="btn btn-success" type="submit" id="btCreateJob" role="button">开始创建</a>
             <a class="btn btn-primary" href="/dashboard" id="btCancelJob" role="button">取消创建</a>
-            <!--
-            <button onclick="cancel()" class="btn btn-primary">取消创建</button>
-            -->
             <script>
               function cancel() {
                 console.log("cancel job");

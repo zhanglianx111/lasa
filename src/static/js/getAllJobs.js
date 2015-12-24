@@ -39,8 +39,6 @@ $(document).ready(function () {
 
       // process
       var td4 = tr.insertCell(4);
-      //td4.innerHTML = "<div class=\"progress progress-striped active\"><div class=\"bar\" style=\"width: 90%;\"></div></div>";
-      //td4.innerHTML = "<div class=\"progress\"><div class=\"progress-bar progress-bar-striped active\" role=\"progressbar\" aria-valuenow=\"45\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"width: 45%\"><span class=\"sr-only\">45% Complete</span></div></div>";
       td4.innerHTML = "<div class=\"progress\"><div class=\"progress-bar progress-bar-striped active\" role=\"progressbar\" aria-valuenow=\"10\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"min-width: 1em; width: 100%\">100%</div></div>";
 		};
 	};

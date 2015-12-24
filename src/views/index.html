@@ -187,6 +187,15 @@
          });
         }
 
+        function saveConfig(a) {
+          var p = $(a).parent().parent().parent().parent().parent();
+          var jobname = p.children()[1].innerHTML;
+          alert(jobname);
+          //$.post("http://127.0.0.1:3000/api/job/config/" + "10q", function(response, status, xhr){
+           //   alert("ok"); 
+          //});
+        }
+
     </script>
     <!-- Bootstrap core JavaScript
     ================================================== -->

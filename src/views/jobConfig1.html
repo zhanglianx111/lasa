@@ -1,7 +1,7 @@
 <div class="modal-body">
-  <form id="myForm" method="post">
-
-    <!--
+  <!--
+  <form id="myForm" action="http://127.0.0.1:3000/api/job/config" method="post">
+  <form id="myForm">
     <input type="hidden" value="hello" id="myField">
     <input value="hello" id="myField">
       <button id="myFormSubmit" type="submit">Submit</button>
@@ -12,14 +12,120 @@
             <div class="modal-content">
               <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h3 id="myModalLabel">Job Configuration</h3>
+                <h4 id="myModalLabel">Job Configuration</h4>
               </div>
-                <div class="modal-body">
-                  <p>One fine body…</p>
+                  <div>
+                    <!--
+                    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                    -->
+                    <div class="main">
+                      <form class="form-inline">
+                        <div class="form-group">
+                          <label for="jobName">项目名称</label>
+                          <input type="text" class="form-control" id="jobName" placeholder="项目名称" value={{.Name}}>
+                        </div>
+                        <div><br></div>
+                        <div class="form-group">
+                          <label for="description">项目描述</label>
+                          <br>
+                          <textarea class="form-control" rows="3" id="description">{{.Desc}}</textarea>
+                          <p class="help-block">有个项目的一些概要信息</p>
+                        </div>
+                        <div><br></div>
+                        <div class="form-group">
+                          <label for="repositryUrl">项目地址</label>
+                          <input type="text" class="form-control" id="repositryUrl" placeholder="repositryUrl" value="{{.GitUrl}}">
+                          <p class="help-block">Example block-level help text here.</p>
+                        </div>
+                         <div><br></div>
+                        <div class="form-group">
+                          <label for="userName">用户名</label>
+                          <label class="sr-only" for="userName">Username</label>
+                          <input type="text" class="form-control" id="userName" placeholder="Username" value="{{.Username}}">
+                          <p class="help-block">登录代码库的用户名</p>
+                        </div>
+                        <div class="form-group">
+                          <label for="password">密码</label>
+                          <label class="sr-only" for="password">Password</label>
+                          <input type="password" class="form-control" id="password" placeholder="Password" value="{{.Passwd}}">
+                          <p class="help-block">登录代码库的密码</p>
+                        </div>
+                         <div><br></div>
+                        <!-- 构建分支 -->
+                        <div class="form-group">
+                          <label for="branches">构建分支</label>
+                          <label class="sr-only" for="branches">*/master</label>
+                          <input type="text" class="form-control" id="branches" placeholder="*/master" value="{{.Branches}}">
+                          <p class="help-block">需要构建的分支名称，格式：*/分支名</p>
+                        </div>
+                        <div><br></div>
+                        <div class="form-group">
+                          <label for="repositryname">镜像名称</label>
+                          <label class="sr-only" for="repositryname">1.0</label>
+                          <input type="text" class="form-control" id="repositryname" placeholder="xxx/xxx" value="{{.RepoName}}">
+                          <p class="help-block">镜像的名字，格式为：xxxx/xxxx</p>
+                        </div>
+                        <div><br></div>
+                        <div class="form-group">
+                          <label for="tag">镜像Tag</label>
+                          <label class="sr-only" for="tag">1.0</label>
+                          <input type="text" class="form-control" id="tag" placeholder="1.0" value="{{.RepoTag}}">
+                          <p class="help-block">镜像标签</p>
+                        </div>
+                        <div><br></div>
+                        <div class="form-group">
+                          <label>Skip Push</label>
+                          <input type="checkbox" {{.Skippush}} id="skippush">
+                          <!--
+                          <script>
+                            function check()
+                            {
+                              console.log($("#skippush").attr("value"))
+                              if ($("#skippush").attr("value") == "false") {
+                                $("#skippush").attr("value", "true")
+                              } else {
+                                $("#skippush").attr("value", "false")
+                              }
+                            }
+                          </script>
+                          -->
+                        </div>
+                        <div><br></div>
+                        <div class="form-group">
+                          <label for="registryUrl">仓库地址</label>
+                          <label class="sr-only" for="registryUrl">http://dhub.yunpro.cn</label>
+                          <input type="text" class="form-control" id="registryUrl" placeholder="http://dhub.yunpro.cn" value="{{.RegistryUrl}}" readonly>
+                          <p class="help-block">构建镜像成功后，将镜像push到仓库</p>
+                        </div>
+                        <div><br></div>
+
+                        <div class="form-group">
+                          <label for="command">Shell Command</label>
+                          <label class="sr-only" for="command">1.0</label>
+                          <br>
+                          <textarea class="form-control" rows="3" id="command">{{.Command}}</textarea>
+
+                          <!--
+              <input type="text" class="form-control" id="command" placeholder="1.0">
+            -->
+                          <p class="help-block">构建镜像时用到的shell命令，多条命令之间使用“;”</p>
+                        </div>
+                        <div><br></div>
+                        <div class="form-group">
+                          <label>Docker Host</label>
+                          <!--
+                          <label class="sr-only" for="dockerHostUrl">tcp://10.10.11.111:2375</label>
+                          -->
+                          <input type="text" class="form-control" id="dockerHostUrl" placeholder="tcp://10.10.11.111:2375" value="{{.DockerHost}}" readonly>
+                          <p class="help-block">构建镜像的docker主机</p>
+                        </div>
+                     </form>
+
+                    </div>
                 </div>
               <div class="modal-footer">
                 <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-                <button class="btn btn-primary">Save changes</button>
+                <button id="btSaveConfig" onclick="saveConfig(this)" class="btn btn-primary" disabled="disabled">Save changes</button>
               </div>
             </div>
           </div>

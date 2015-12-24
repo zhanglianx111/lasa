@@ -5,13 +5,16 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"reflect"
 	"strconv"
+	"strings"
 	"text/template"
 	"utils"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/beevik/etree"
 	simplejs "github.com/bitly/go-simplejson"
+	"github.com/clbanning/mxj"
 	"github.com/go-martini/martini"
 )
 
@@ -477,34 +480,110 @@ func HandlerBuildConsoleOutput(params martini.Params, w http.ResponseWriter, r *
 }
 
 func HandlerJobConfig(params martini.Params, w http.ResponseWriter, r *http.Request) {
-	jobid := params["jobid"]
-	job, err := JenkinsClient.GetJob(jobid)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	//config, err = job.GetConfig()
-	_, err = job.GetConfig()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	// for test
-	data := map[string]string{"a": jobid, "b": "b"}
-	jdata, _ := json.Marshal(data)
-	//w.Header().Set("Content-Type", "application/xml")
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(jdata)
-	/*
-		tJobConfig, err := template.ParseFiles("./views/jobConfig.html")
+	if r.Method == "GET" {
+		jobid := params["jobid"]
+		job, err := JenkinsClient.GetJob(jobid)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		// config is a xml format
+		config, err := job.GetConfig()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		m, err := mxj.NewMapXml([]byte(config))
+		if err != nil {
+			log.Errorf(err.Error())
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		kpv := map[string]*mxj.LeafNode{
+			"description":  &mxj.LeafNode{},
+			"uri":          &mxj.LeafNode{}, // docker host
+			"url4git":      &mxj.LeafNode{}, // project git address
+			"url4registry": &mxj.LeafNode{}, // registry address
+			//"usr":         &mxj.LeafNode{},
+			//"passwd":      &mxj.LeafNode{},
+			"name":     &mxj.LeafNode{}, // branches name
+			"repoName": &mxj.LeafNode{},
+			"repoTag":  &mxj.LeafNode{},
+			"skipPush": &mxj.LeafNode{},
+			"command":  &mxj.LeafNode{},
+		}
+		paths := m.PathsForKey("url")
+		for _, p := range paths {
+			if strings.Contains(p, "UserRemoteConfig") {
+				kpv["url4git"].Path = p
+			} else if strings.Contains(p, "registry") {
+				kpv["url4registry"].Path = p
+			} else {
+				log.Warnf("not founc url path")
+			}
+		}
+
+		for key, _ := range kpv {
+			if key != "url4git" && key != "url4registry" {
+				kpv[key].Path = m.PathForKeyShortest(key)
+			}
+		}
+
+		leafNodes := m.LeafNodes()
+		for _, v := range leafNodes {
+			for k, vv := range kpv {
+				if vv.Path == v.Path {
+					kpv[k].Value = v.Value
+					fmt.Println(v.Value)
+					fmt.Println(v.Path)
+				}
+			}
+		}
+
+		type jobConfig struct {
+			Name        string // job name
+			Desc        string // job description
+			DockerHost  string // docker host
+			Username    string
+			Passwd      string
+			Branches    string // branches name
+			RepoName    string // repositry name
+			RepoTag     string // repositry tag
+			Skippush    string // skip push
+			RegistryUrl string // registry url
+			GitUrl      string
+			Command     string // command
+		}
+		var jc jobConfig
+		jc.Name = jobid
+		jc.Desc = reflect.ValueOf(kpv["description"].Value).String()
+		jc.DockerHost = reflect.ValueOf(kpv["uri"].Value).String()
+		jc.Username = "username"
+		jc.Passwd = "password"
+		jc.Branches = reflect.ValueOf(kpv["name"].Value).String()
+		jc.RepoName = reflect.ValueOf(kpv["repoName"].Value).String()
+		jc.RepoTag = reflect.ValueOf(kpv["repoTag"].Value).String()
+
+		if reflect.ValueOf(kpv["skipPush"].Value).String() == "true" {
+			jc.Skippush = "checked"
+		}
+		jc.RegistryUrl = reflect.ValueOf(kpv["url4registry"].Value).String()
+		jc.GitUrl = reflect.ValueOf(kpv["url4git"].Value).String()
+		jc.Command = reflect.ValueOf(kpv["command"].Value).String()
+
+		fmt.Println(jc)
+		tJobConfig, err := template.ParseFiles("./views/jobConfig1.html")
 		if err != nil {
 			fmt.Fprintf(w, err.Error())
 			return
 		}
-		fmt.Println("joconfig")
-		tJobConfig.Execute(w, nil)
+
+		tJobConfig.Execute(w, jc)
 		return
-	*/
+	} else {
+		fmt.Fprintf(w, "developing...")
+	}
 }
 
 /*
