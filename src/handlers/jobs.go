@@ -457,28 +457,6 @@ func HandlerStopBuild(params martini.Params, w http.ResponseWriter, r *http.Requ
 	return
 }
 
-func HandlerBuildConsoleOutput(params martini.Params, w http.ResponseWriter, r *http.Request) {
-	jobid := params["jobid"]
-	number := params["number"]
-	fmt.Println(number)
-	n, err := strconv.ParseInt(number, 10, 64)
-	if err != nil {
-		log.Errorf("str to int64 faild")
-		return
-	}
-
-	build, err := JenkinsClient.GetBuild(jobid, n)
-	if err != nil {
-		log.Errorf("get job:%s build faild", jobid)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	output := build.GetConsoleOutput()
-	fmt.Fprintf(w, output)
-	return
-}
-
 func HandlerJobConfig(params martini.Params, w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		jobid := params["jobid"]
@@ -535,8 +513,6 @@ func HandlerJobConfig(params martini.Params, w http.ResponseWriter, r *http.Requ
 			for k, vv := range kpv {
 				if vv.Path == v.Path {
 					kpv[k].Value = v.Value
-					fmt.Println(v.Value)
-					fmt.Println(v.Path)
 				}
 			}
 		}
@@ -572,7 +548,6 @@ func HandlerJobConfig(params martini.Params, w http.ResponseWriter, r *http.Requ
 		jc.GitUrl = reflect.ValueOf(kpv["url4git"].Value).String()
 		jc.Command = reflect.ValueOf(kpv["command"].Value).String()
 
-		fmt.Println(jc)
 		tJobConfig, err := template.ParseFiles("./views/jobConfig1.html")
 		if err != nil {
 			fmt.Fprintf(w, err.Error())

@@ -17,5 +17,5 @@ func main() {
 	m.Action(router.Routers.Handle)
 	http.Handle("/", m)
 	// run app at port 3000
-	m.RunOnAddr(":3000")
+	m.RunOnAddr("10.10.16.42:3000")
 }

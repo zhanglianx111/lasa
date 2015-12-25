@@ -23,7 +23,7 @@ $( document ).ready(function() {
     	"passwd": passwd
     };
     $.ajax({
-    	type: "post",
+    	type: "POST",
     	url: "http://127.0.0.1:3000/login",
     	data: usrData,
     	success: success,
