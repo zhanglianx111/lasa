@@ -51,8 +51,8 @@ func init() {
 	/* log */
 	Routers.Get("/api/log/level", handlers.HandlerGetLogLevel)
 	/* build */
-	Routers.Get("/api/build/buildlog/:jobid/:number", handlers.HandlerBuildConsoleOutput)
-	Routers.Get("/api/build/result/:jobid/:number", handlers.HandlerGetBuildResult)
+	Routers.Get("/api/build/buildlog/:jobid", handlers.HandlerBuildConsoleOutput)
+	Routers.Get("/api/build/result/:jobid", handlers.HandlerGetBuildResult)
 	/* method POST */
 	/* job */
 	//Routers.Post("/api/job/create/:jobid", handlers.HandlerCreateJob)

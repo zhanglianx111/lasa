@@ -34,12 +34,12 @@ $(document).ready(function () {
 			td2.innerHTML = jobname;
       // actions
 			var td3 = tr.insertCell(3);
-      var text = "<div class=\"dropdown\"><button class=\"btn dropdown-toggle\" type=\"button\" id=\"dropdownMenu1\" data-toggle=\"dropdown\"> Action <span class=\"caret\"></span></button><ul class=\"dropdown-menu text-right\" role=\"menu\" aria-labelledby=\"dropdownMenu1\"><li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" id=\"build\" onclick=\"mybuild(this)\">Build</a></li><li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" onclick=\"mydelete(this)\" >Delete</a></li><li role=\"presentation\" class=\"divider\"></li><li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" onclick=\"jobconfig(this)\">Job Configuration</a></li></ul></div>";
+      var text = "<div class=\"dropdown\"><button class=\"btn dropdown-toggle\" type=\"button\" id=\"dropdownMenu1\" data-toggle=\"dropdown\"> Action <span class=\"caret\"></span></button><ul class=\"dropdown-menu text-right\" role=\"menu\" aria-labelledby=\"dropdownMenu1\"><li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" id=\"build\" onclick=\"mybuild(this)\">Build</a></li><li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" onclick=\"buildlog(this)\">Log</a></li><li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" onclick=\"mydelete(this)\" >Delete</a></li><li role=\"presentation\" class=\"divider\"></li><li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" onclick=\"jobconfig(this)\">Job Configuration</a></li></ul></div>";
 			td3.innerHTML = text;
 
       // process
       var td4 = tr.insertCell(4);
-      td4.innerHTML = "<div class=\"progress\"><div class=\"progress-bar progress-bar-striped active\" role=\"progressbar\" aria-valuenow=\"10\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"min-width: 1em; width: 100%\">100%</div></div>";
+      td4.innerHTML = "<div class=\"progress\"><div id=\"processor_"+jobname+"\"" + "class=\"progress-bar progress-bar-striped active\" role=\"progressbar\" aria-valuenow=\"90\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"min-width: 0em; width: 0%\">0%</div></div>";
 		};
 	};
 

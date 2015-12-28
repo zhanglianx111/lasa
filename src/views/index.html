@@ -125,7 +125,7 @@
             </table>
           </div>
           
-        <div id="test">
+        <div id="showJobConfigOrLog">
         </div>
         <!--
         <div class="text-center">
@@ -175,20 +175,42 @@
           });
         }
 
+        function complate(jobname) {
+          $.get("http://127.0.0.1:3000/api/build/result/"+jobname, function success(response) {
+             console.log(response); 
+             if (response.length == 0) {
+                return false;
+                } else {
+                  return true;
+                }
+              }); 
+          return true;
+        }
         function mybuild(a) {
           var p = $(a).parent().parent().parent().parent().parent();
           var jobname = p.children()[1].innerHTML;
           $.post("http://127.0.0.1:3000/api/job/build/" + jobname, function success() {
               console.log("build ok");
+              var x = document.getElementById('processor_'+jobname);
+              rand = Math.floor(Math.random() * 100);
+              x.style.width=rand + "%";
+              x.innerHTML=rand + "%";
+              //setTimeout(console.log("x"), 2000);
+              if (complate(jobname)) {
+                console.log("build done");
+                x.style.width='100%';
+                x.innerHTML='100%';
+              }
               });
         }
+
 
         function jobconfig(a) {
           var p = $(a).parent().parent().parent().parent().parent();
           var jobname = p.children()[1].innerHTML;
           $.get("http://127.0.0.1:3000/api/job/config/"+ jobname, function(response, status, xhr){
               console.log("get job config ok:" + jobname);
-              document.getElementById("test").innerHTML = response;
+              document.getElementById("showJobConfigOrLog").innerHTML = response;
               $('#myModal').modal();
          });
         }
@@ -200,6 +222,15 @@
           //$.post("http://127.0.0.1:3000/api/job/config/" + "10q", function(response, status, xhr){
            //   alert("ok"); 
           //});
+        }
+
+        function buildlog(a) {
+          var p = $(a).parent().parent().parent().parent().parent();
+          var jobname = p.children()[1].innerHTML;
+          $.get("http://127.0.0.1:3000/api/build/buildlog/" + jobname, function(response, status, xhr)           {
+              document.getElementById("showJobConfigOrLog").innerHTML = response;
+              $('#myModal').modal();
+            });
         }
 
     </script>

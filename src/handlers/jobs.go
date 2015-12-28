@@ -316,7 +316,6 @@ func HandlerGetAllJobs(w http.ResponseWriter, r *http.Request) {
 
 	jobs, _ := JenkinsClient.GetAllJobs()
 	for _, job := range jobs {
-		fmt.Println(job)
 		jobData := utils.AnalysisJob(job.Raw)
 		jobsData = append(jobsData, jobData)
 	}
