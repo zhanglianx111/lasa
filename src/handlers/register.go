@@ -20,9 +20,10 @@ func HandlerRegister(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		fmt.Println(r.PostFormValue("email"))
-		email := r.PostFormValue("email")
+		user := r.PostFormValue("user")
 		passwd := r.PostFormValue("passwd")
-		if email == "zlx@zlx.com" && passwd == "zlx" {
+		email := r.PostFormValue("email")
+		if email == "zlx@zlx.com" && passwd == "zlx" && user == "zlx" {
 			fmt.Fprintf(w, "success")
 		} else {
 			w.WriteHeader(401)

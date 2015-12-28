@@ -1,13 +1,16 @@
 $( document ).ready(function() {
     $('#btRegister').click(function() {
     console.log("register");
+    var user = $('#inputUsername').val();
     var email = $('#inputEmail').val();
     var passwd = $('#inputPassword').val();
-    console.log(email);
+    console.log(user);
     console.log(passwd);
+    console.log(email);
     var usrData = {
-    	"email": email,
-    	"passwd": passwd
+      "user": user,
+    	"passwd": passwd,
+    	"email": email
     };
     $.ajax({
     	type: "post",

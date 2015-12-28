@@ -20,12 +20,12 @@ func HandlerLogin(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, err.Error())
 		}
 	} else {
-		fmt.Println(r.PostFormValue("email"))
-		email := r.PostFormValue("email")
+		fmt.Println(r.PostFormValue("user"))
+		user := r.PostFormValue("user")
 		passwd := r.PostFormValue("passwd")
-		fmt.Println(email)
+		fmt.Println(user)
 		fmt.Println(passwd)
-		if email == "zlx@zlx.com" && passwd == "zlx" {
+		if user == "zlx" && passwd == "zlx" {
 			fmt.Fprintf(w, "success")
 		} else {
 			w.WriteHeader(401)

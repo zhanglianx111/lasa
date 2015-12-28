@@ -14,12 +14,12 @@ $( document ).ready(function() {
     // login button
     $('#btLogin').click(function() {
     console.log("login");
-    var email = $('#inputEmail').val();
+    var user= $('#inputUsername').val();
     var passwd = $('#inputPassword').val();
-    console.log(email);
+    console.log(user);
     console.log(passwd);
     var usrData = {
-    	"email": email,
+    	"user": user,
     	"passwd": passwd
     };
     $.ajax({
@@ -28,7 +28,7 @@ $( document ).ready(function() {
     	data: usrData,
     	success: success,
     	error: function() {
-    		alert("login failed, please check you email and password");
+    		alert("login failed, please check you username and password");
     		return false;
     	}
     });
