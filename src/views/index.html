@@ -175,22 +175,21 @@
           });
         }
 
-        function complate(jobname) {
-          $.get("http://127.0.0.1:3000/api/build/result/"+jobname, function success(response) {
-             console.log(response); 
-             if (response.length == 0) {
-                return false;
-                } else {
-                  return true;
-                }
-              }); 
-          return true;
-        }
+
         function mybuild(a) {
           var p = $(a).parent().parent().parent().parent().parent();
           var jobname = p.children()[1].innerHTML;
           $.post("http://127.0.0.1:3000/api/job/build/" + jobname, function success() {
               console.log("build ok");
+              console.log(jobname);
+              do {
+                console.log("start");
+                setTimeout(complate(jobname), 2000);
+                console.log("end");
+               // console.log(complate(jobname));
+              } while(false);
+              //setInterval(complate(jobname), 1000);
+              /*
               var x = document.getElementById('processor_'+jobname);
               rand = Math.floor(Math.random() * 100);
               x.style.width=rand + "%";
@@ -201,7 +200,19 @@
                 x.style.width='100%';
                 x.innerHTML='100%';
               }
+              */
               });
+        function complate(jobname) {
+          $.get("http://127.0.0.1:3000/api/build/result/"+jobname, function success(response) {
+             console.log(response); 
+             if (response.length == 0) {
+                return false;
+                } else {
+                  return true;
+                }
+              }); 
+          //return false;
+        };
         }
 
 

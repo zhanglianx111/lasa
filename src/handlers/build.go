@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 	"text/template"
+	"time"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/go-martini/martini"
@@ -31,7 +32,7 @@ func HandlerBuildConsoleOutput(params martini.Params, w http.ResponseWriter, r *
 		Log string
 	}
 	bLog := buildlog{}
-
+	time.Sleep(1000 * time.Millisecond)
 	latestId := getLatestBuildID(jobid)
 	if latestId == -1 {
 		bLog.Log = "no log found, please Do Build Action"
@@ -64,12 +65,14 @@ func getLatestBuildID(jobname string) int64 {
 		log.Errorf(err.Error())
 		return -1
 	}
+	log.Debugf("latest build ids:", ids)
 	/*
 		for _, id := range ids {
 			fmt.Println(id.Number)
 		}
 	*/
 	if len(ids) != 0 {
+		fmt.Println(jobname, " latest id: ", ids[0].Number)
 		return ids[0].Number
 	} else {
 		return -1
@@ -87,6 +90,7 @@ func HandlerGetBuildResult(params martini.Params, w http.ResponseWriter, r *http
 			return
 		}
 	*/
+	//time.Sleep(5000 * time.Millisecond)
 	latestId := getLatestBuildID(jobid)
 	if latestId == -1 {
 		return
@@ -100,6 +104,7 @@ func HandlerGetBuildResult(params martini.Params, w http.ResponseWriter, r *http
 
 	rst := build.GetResult()
 	fmt.Fprintf(w, rst)
+	log.Debugf("build id: %d, build result:%s", latestId, rst)
 	return
 }
 
