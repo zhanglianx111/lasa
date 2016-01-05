@@ -31,6 +31,7 @@ func init() {
 		log.Errorf(err.Error())
 		return
 	}
+	log.Debugf(AbsBaseCfg)
 	JobConfig = etree.NewDocument()
 	if err := JobConfig.ReadFromFile(AbsBaseCfg); err != nil {
 		log.Errorf(err.Error())
