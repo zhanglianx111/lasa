@@ -15,7 +15,7 @@ import (
 
 var JenkinsClient *gojenkins.Jenkins
 var JobConfig *etree.Document
-var BaseCfg = "./handlers/_tests/config.xml"
+var BaseCfg = "handlers/_tests/config.xml"
 
 type JenkinsInfo struct {
 	Jobs      []string `json:jobs`
