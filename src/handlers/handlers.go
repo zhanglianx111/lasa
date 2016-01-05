@@ -53,6 +53,7 @@ func getJenkinsClient() *gojenkins.Jenkins {
 		jenkinsHost = os.Getenv("JENKINS_HOST")
 		jenkinsPort = os.Getenv("JENKINS_PORT")
 		if jenkinsHost == "" || jenkinsPort == "" {
+			log.Errorf("jenkinsHost:%s, jenkinsPort:%s", jenkinsHost, jenkinsPort)
 			return nil
 		}
 	} else {
