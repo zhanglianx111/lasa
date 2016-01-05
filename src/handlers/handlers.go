@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"path/filepath"
 	"time"
 
 	log "github.com/Sirupsen/logrus"
@@ -15,7 +14,7 @@ import (
 
 var JenkinsClient *gojenkins.Jenkins
 var JobConfig *etree.Document
-var BaseCfg = "handlers/_tests/config.xml"
+var BaseCfg = "/root/jenkins_api/src/handlers/_tests/config.xml"
 
 type JenkinsInfo struct {
 	Jobs      []string `json:jobs`
@@ -26,14 +25,8 @@ type JenkinsInfo struct {
 func init() {
 	log.SetLevel(log.DebugLevel)
 	// do a deep copy for etree of job config.xml
-	AbsBaseCfg, err := filepath.Abs(BaseCfg)
-	if err != nil {
-		log.Errorf(err.Error())
-		return
-	}
-	log.Debugf(AbsBaseCfg)
 	JobConfig = etree.NewDocument()
-	if err := JobConfig.ReadFromFile(AbsBaseCfg); err != nil {
+	if err := JobConfig.ReadFromFile(BaseCfg); err != nil {
 		log.Errorf(err.Error())
 		return
 	}
