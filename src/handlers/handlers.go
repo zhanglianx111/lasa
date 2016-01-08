@@ -66,11 +66,9 @@ func getJenkinsClient() *gojenkins.Jenkins {
 }
 
 func HandlerDefault(w http.ResponseWriter, r *http.Request) {
-	/*
-		if r.Method != "GET" {
-			fmt.Println("Error method:", r.Method)
-		}
-		http.Redirect(w, r, "/login", http.StatusFound)
-	*/
+	if r.Method != "GET" {
+		fmt.Println("Error method:", r.Method)
+	}
+	http.Redirect(w, r, "/login", http.StatusFound)
 	fmt.Fprintf(w, "jenkins rest api server")
 }
