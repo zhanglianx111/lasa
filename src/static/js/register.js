@@ -14,7 +14,7 @@ $( document ).ready(function() {
     };
     $.ajax({
     	type: "post",
-    	url: "http://127.0.0.1:3000/register",
+    	url: "/register",
     	data: usrData,
     	success: success,
     	error: function() {
@@ -25,7 +25,7 @@ $( document ).ready(function() {
     function success() {
     	console.log("reigster success");
       alert("register success!");
-    	location.href="http://127.0.0.1:3000/login";
+    	location.href="/login";
     };
 	});
 });
