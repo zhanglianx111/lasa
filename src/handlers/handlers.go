@@ -56,7 +56,7 @@ func getJenkinsClient() *gojenkins.Jenkins {
 	}
 
 	url := "http://" + jenkinsHost + ":" + jenkinsPort
-	jenkins, err := gojenkins.CreateJenkins(url, "admin", "admin").Init()
+	jenkins, err := gojenkins.CreateJenkins(url, "admin", "1q2w3e").Init()
 	if err != nil {
 		log.Errorf("connecting jenkins server:%s:%s failed with error:%s", jenkinsHost, jenkinsPort, err)
 		return nil

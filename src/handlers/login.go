@@ -27,6 +27,8 @@ func HandlerLogin(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(passwd)
 		if user == "zlx" && passwd == "zlx" {
 			fmt.Fprintf(w, "success")
+		} else if user == "admin" && passwd == "1q2w3e" {
+			fmt.Fprintf(w, "success")
 		} else {
 			w.WriteHeader(401)
 			fmt.Fprintf(w, "please checkout your email and password!")
