@@ -11,8 +11,13 @@ import (
 )
 
 func HandlerCreateView(params martini.Params, w http.ResponseWriter, r *http.Request) {
+<<<<<<< HEAD
 	viewName := params["name"]
 	viewType := params["type"]
+=======
+	viewName := params[":name"]
+	viewType := params[":type"]
+>>>>>>> 5d83d1121461d3cf6c9157e0a2d6922618612225
 	fmt.Println(viewName, viewType)
 	view, err := JenkinsClient.CreateView(viewName, gojenkins.LIST_VIEW)
 	if err != nil {
@@ -31,8 +36,13 @@ func HandlerDeleteView(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandlerViewAddJob(params martini.Params, w http.ResponseWriter, r *http.Request) {
+<<<<<<< HEAD
 	viewName := params["name"]
 	jobName := params["jobid"]
+=======
+	viewName := params[":name"]
+	jobName := params[":jobid"]
+>>>>>>> 5d83d1121461d3cf6c9157e0a2d6922618612225
 	fmt.Println(viewName, jobName)
 	if viewName == "" || jobName == "" {
 		fmt.Fprintf(w, "viewName or jobid is empty")
@@ -63,8 +73,13 @@ func HandlerViewAddJob(params martini.Params, w http.ResponseWriter, r *http.Req
 }
 
 func HandlerViewDeleteJob(params martini.Params, w http.ResponseWriter, r *http.Request) {
+<<<<<<< HEAD
 	viewName := params["name"]
 	jobName := params["jobid"]
+=======
+	viewName := params[":name"]
+	jobName := params[":jobid"]
+>>>>>>> 5d83d1121461d3cf6c9157e0a2d6922618612225
 	fmt.Println(viewName, jobName)
 	if viewName == "" || jobName == "" {
 		fmt.Fprintf(w, "viewName or jobid is empty")
@@ -114,9 +129,13 @@ func HandlerGetAllViews(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandlerGetView(params martini.Params, w http.ResponseWriter, r *http.Request) {
+<<<<<<< HEAD
 	fmt.Println(params)
 	viewName := params["viewid"]
 	fmt.Println(viewName)
+=======
+	viewName := params[":viewid"]
+>>>>>>> 5d83d1121461d3cf6c9157e0a2d6922618612225
 	if viewName == "" {
 		fmt.Fprintf(w, "params(view) is empty")
 		return
