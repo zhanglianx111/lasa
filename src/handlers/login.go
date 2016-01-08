@@ -9,7 +9,7 @@ import (
 func HandlerLogin(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(r.Method)
 	if r.Method == "GET" {
-		tmpl, err := template.ParseFiles("/root/jenkins_api/src/views/login.html")
+		tmpl, err := template.ParseFiles("views/login.html")
 		if err != nil {
 			fmt.Fprintf(w, err.Error())
 			return
