@@ -155,7 +155,7 @@ func HandlerCreateJob(w http.ResponseWriter, r *http.Request) {
 */
 func HandlerCreateJob(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
-		tCreateJob, err := template.ParseFiles("./views/createJob.html")
+		tCreateJob, err := template.ParseFiles("/root/jenins_api/src/views/createJob.html")
 		if err != nil {
 			fmt.Println(w, err.Error())
 			return
