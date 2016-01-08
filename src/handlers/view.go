@@ -5,14 +5,14 @@ import (
 	"fmt"
 
 	"github.com/bndr/gojenkins"
+	"github.com/go-martini/martini"
 	//"github.com/zhanglianx111/gojenkins"
 	"net/http"
 )
 
-func HandlerCreateView(w http.ResponseWriter, r *http.Request) {
-	params := r.URL.Query()
-	viewName := params.Get(":name")
-	viewType := params.Get(":type")
+func HandlerCreateView(params martini.Params, w http.ResponseWriter, r *http.Request) {
+	viewName := params[":name"]
+	viewType := params[":type"]
 	fmt.Println(viewName, viewType)
 	view, err := JenkinsClient.CreateView(viewName, gojenkins.LIST_VIEW)
 	if err != nil {
@@ -30,10 +30,9 @@ func HandlerDeleteView(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func HandlerViewAddJob(w http.ResponseWriter, r *http.Request) {
-	params := r.URL.Query()
-	viewName := params.Get(":name")
-	jobName := params.Get(":jobid")
+func HandlerViewAddJob(params martini.Params, w http.ResponseWriter, r *http.Request) {
+	viewName := params[":name"]
+	jobName := params[":jobid"]
 	fmt.Println(viewName, jobName)
 	if viewName == "" || jobName == "" {
 		fmt.Fprintf(w, "viewName or jobid is empty")
@@ -63,10 +62,9 @@ func HandlerViewAddJob(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "true")
 }
 
-func HandlerViewDeleteJob(w http.ResponseWriter, r *http.Request) {
-	params := r.URL.Query()
-	viewName := params.Get(":name")
-	jobName := params.Get(":jobid")
+func HandlerViewDeleteJob(params martini.Params, w http.ResponseWriter, r *http.Request) {
+	viewName := params[":name"]
+	jobName := params[":jobid"]
 	fmt.Println(viewName, jobName)
 	if viewName == "" || jobName == "" {
 		fmt.Fprintf(w, "viewName or jobid is empty")
@@ -115,9 +113,8 @@ func HandlerGetAllViews(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonData)
 }
 
-func HandlerGetView(w http.ResponseWriter, r *http.Request) {
-	params := r.URL.Query()
-	viewName := params.Get(":viewid")
+func HandlerGetView(params martini.Params, w http.ResponseWriter, r *http.Request) {
+	viewName := params[":viewid"]
 	if viewName == "" {
 		fmt.Fprintf(w, "params(view) is empty")
 		return
