@@ -37,7 +37,7 @@ $(document).ready(function () {
 //    console.log(job)
     $.ajax({
       type: "POST",
-      url: "http://127.0.0.1:3000/createjob",
+      url: "/createjob",
       data: JSON.stringify(job),
       success: function(data, textStatus, jqXHR) {
         console.log(data);

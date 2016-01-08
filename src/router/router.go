@@ -22,6 +22,8 @@ func init() {
 	/* login */
 	Routers.Get("/login", handlers.HandlerLogin)
 	Routers.Post("/login", handlers.HandlerLogin)
+	/* logout */
+	Routers.Post("/logout", handlers.HandlerLogout)
 	/* dashboard */
 	Routers.Get("/dashboard", handlers.HandlerDashboard)
 	/* job */

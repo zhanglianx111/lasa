@@ -24,7 +24,7 @@ $( document ).ready(function() {
     };
     $.ajax({
     	type: "POST",
-    	url: "http://127.0.0.1:3000/login",
+    	url: "/login",
     	data: usrData,
     	success: success,
     	error: function() {
@@ -34,7 +34,7 @@ $( document ).ready(function() {
     });
     function success() {
     	console.log("login success");
-    	location.href="http://127.0.0.1:3000/dashboard";
+    	location.href="/dashboard";
     };
 	});
     //register button
@@ -42,7 +42,7 @@ $( document ).ready(function() {
     console.log("register");
       $.ajax({
     	type: "get",
-    	url: "http://127.0.0.1:3000/register",
+    	url: "/register",
     	success: success,
     	error: function() {
     		alert("register failed");
@@ -51,7 +51,7 @@ $( document ).ready(function() {
     });
     function success() {
     	console.log("register success");
-    	location.href="http://127.0.0.1:3000/register";
+    	location.href="/register";
     };
 	});
 });

@@ -3,18 +3,18 @@ package handlers
 import (
 	"fmt"
 	"net/http"
-	"os"
-	"time"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/astaxie/beego/session"
 	"github.com/bndr/gojenkins"
 	//"github.com/zhanglianx111/gojenkins"
 	"github.com/beevik/etree"
 )
 
-var JenkinsClient *gojenkins.Jenkins
+var JenkinsClient map[string]*gojenkins.Jenkins
+var GlobalSessions *session.Manager
 var JobConfig *etree.Document
-var BaseCfg = "/root/jenkins_api/src/handlers/_tests/config.xml"
+var BaseCfg = "/Users/zhanglianxiang/workspace/jenkins_api/src/handlers/_tests/config.xml"
 
 type JenkinsInfo struct {
 	Jobs      []string `json:jobs`
@@ -30,17 +30,26 @@ func init() {
 		log.Errorf(err.Error())
 		return
 	}
-	for {
-		JenkinsClient = getJenkinsClient()
-		if JenkinsClient == nil {
-			time.Sleep(10)
-			continue
-		} else {
-			break
+
+	// session uses memory
+	GlobalSessions, _ = session.NewManager(
+		"cookie", `{"cookieName":"sessionId","enableSetCookie":true,"gclifetime":30,"ProviderConfig":"{\"cookieName\":\"sessionId\",\"securityKey\":\"beegocookiehashkey\"}"}`)
+	go GlobalSessions.GC()
+	JenkinsClient = make(map[string]*gojenkins.Jenkins)
+	/*
+		for {
+			JenkinsClient = getJenkinsClient()
+			if JenkinsClient == nil {
+				time.Sleep(10)
+				continue
+			} else {
+				break
+			}
 		}
-	}
+	*/
 }
 
+/*
 func getJenkinsClient() *gojenkins.Jenkins {
 	var jenkinsHost, jenkinsPort string
 	if os.Getenv("ENVIRONMENT") == "production" {
@@ -64,13 +73,11 @@ func getJenkinsClient() *gojenkins.Jenkins {
 	log.Infof("connect jenkins server:%s:%s is OK!", jenkinsHost, jenkinsPort)
 	return jenkins
 }
-
+*/
 func HandlerDefault(w http.ResponseWriter, r *http.Request) {
-	/*
-		if r.Method != "GET" {
-			fmt.Println("Error method:", r.Method)
-		}
-		http.Redirect(w, r, "/login", http.StatusFound)
-	*/
-	fmt.Fprintf(w, "jenkins rest api server")
+	if r.Method != "GET" {
+		fmt.Println("Error method:", r.Method)
+	}
+	http.Redirect(w, r, "/login", http.StatusFound)
+	//	fmt.Fprintf(w, "jenkins rest api server")
 }

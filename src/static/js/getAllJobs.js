@@ -1,7 +1,7 @@
 //$(function() {
 $(document).ready(function () {
 	console.log("mabide");
-	jQuery.get("http://127.0.0.1:3000/api/job/alljobs", {}, success, "");
+	jQuery.get("/api/job/alljobs", {}, success, "");
 
 	function success(data, textStatus, jqXHR)
 	{

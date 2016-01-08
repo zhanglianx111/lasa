@@ -1,11 +1,12 @@
 package handlers
 
 import (
-	"net/http"
-	"fmt"
-	"strconv"
 	"encoding/json"
+	"fmt"
+	"net/http"
+	"strconv"
 )
+
 /*
 type plugin struct {
 
@@ -17,7 +18,8 @@ func HandlerGetPlugins(w http.ResponseWriter, r *http.Request) {
 	depth, _ := strconv.Atoi(d)
 	fmt.Println(depth)
 
-	plugins, err := JenkinsClient.GetPlugins(depth)
+	jc := getJenkinsClient(r)
+	plugins, err := jc.GetPlugins(depth)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -26,12 +28,12 @@ func HandlerGetPlugins(w http.ResponseWriter, r *http.Request) {
 	p := map[string]interface{}{}
 	for _, plg := range plugins.Raw.Plugins {
 		//plgs = append(plgs, p.LongName)
-		p = map[string]interface{}{"name": plg.LongName, 
-							"active": plg.Active,
-							"version": plg.Version,
-							"enabled": plg.Enabled,
-							"url": plg.URL}
-		plgs = append(plgs, p) 
+		p = map[string]interface{}{"name": plg.LongName,
+			"active":  plg.Active,
+			"version": plg.Version,
+			"enabled": plg.Enabled,
+			"url":     plg.URL}
+		plgs = append(plgs, p)
 		//fmt.Println(p.LongName)
 	}
 	jsonData, err := json.Marshal(plgs)

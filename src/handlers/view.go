@@ -14,7 +14,8 @@ func HandlerCreateView(w http.ResponseWriter, r *http.Request) {
 	viewName := params.Get(":name")
 	viewType := params.Get(":type")
 	fmt.Println(viewName, viewType)
-	view, err := JenkinsClient.CreateView(viewName, gojenkins.LIST_VIEW)
+	jc := getJenkinsClient(r)
+	view, err := jc.CreateView(viewName, gojenkins.LIST_VIEW)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 
@@ -40,7 +41,8 @@ func HandlerViewAddJob(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	view, err := JenkinsClient.GetView(viewName)
+	jc := getJenkinsClient(r)
+	view, err := jc.GetView(viewName)
 	fmt.Println(view)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -73,7 +75,8 @@ func HandlerViewDeleteJob(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	view, err := JenkinsClient.GetView(viewName)
+	jc := getJenkinsClient(r)
+	view, err := jc.GetView(viewName)
 	fmt.Println(view)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -94,7 +97,8 @@ func HandlerViewDeleteJob(w http.ResponseWriter, r *http.Request) {
 func HandlerGetAllViews(w http.ResponseWriter, r *http.Request) {
 	var allViews []map[string]interface{}
 
-	views, err := JenkinsClient.GetAllViews()
+	jc := getJenkinsClient(r)
+	views, err := jc.GetAllViews()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -123,7 +127,8 @@ func HandlerGetView(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	view, err := JenkinsClient.GetView(viewName)
+	jc := getJenkinsClient(r)
+	view, err := jc.GetView(viewName)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
