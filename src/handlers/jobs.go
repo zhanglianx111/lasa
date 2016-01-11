@@ -321,12 +321,13 @@ func HandlerGetAllJobs(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	cookie, _ := r.Cookie("sessionId")
-	//GlobalSessions.SessionRead(cookie.Value)
-	s, _ := GlobalSessions.GetSessionStore(cookie.Value)
-	log.Debugf("user:%s", s.Get("user"))
-
+	//sess, _ := GlobalSessions.SessionStart(w, r)
+	sess, _ := GlobalSessions.GetSessionStore(cookie.Value)
+	log.Debugf("user:%s", sess.Get("user"))
+	fmt.Println(sess)
+	log.Debugf("sid: %s", sess.SessionID())
 	jc := getJenkinsClient(r)
-	fmt.Println(jc)
+	fmt.Println("jc:", jc)
 	jobs, _ := jc.GetAllJobs()
 	for _, job := range jobs {
 		jobData := utils.AnalysisJob(job.Raw)

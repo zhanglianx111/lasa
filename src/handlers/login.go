@@ -12,7 +12,9 @@ import (
 
 func HandlerLogin(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(r.Method, r.URL)
-
+	sess, _ := GlobalSessions.SessionStart(w, r)
+	defer sess.SessionRelease(w)
+	fmt.Println(sess.Get("user"))
 	if r.Method == "GET" {
 		tmpl, err := template.ParseFiles("./views/login.html")
 		if err != nil {
@@ -25,30 +27,42 @@ func HandlerLogin(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, err.Error())
 		}
 	} else {
-		sess, err := GlobalSessions.SessionStart(w, r)
-		if err != nil {
-			log.Warnf("session err: %s", err.Error())
-		}
-		defer sess.SessionRelease(w)
-
-		sess.Set("user", r.PostFormValue("user"))
-		user := r.PostFormValue("user")
-		passwd := r.PostFormValue("passwd")
-		fmt.Println("--seesionid:", sess.SessionID())
-		fmt.Println("--username: ", sess.Get("user"))
-		fmt.Println("passwd: ", passwd)
+		usr := r.PostFormValue("user")
+		pwd := r.PostFormValue("passwd")
+		/*
+			sid, err := r.Cookie("sessionId")
+			if err != nil {
+				// a new session
+				fmt.Println("xxxxxxxxxx")
+				sess, err = GlobalSessions.SessionStart(w, r)
+				if err != nil {
+					log.Warnf("session err: %s", err.Error())
+				}
+				//defer sess.SessionRelease(w)
+				fmt.Println(sess)
+		*/
+		sess.Set("user", usr)
 		//sess.SessionRelease(w)
-		fmt.Println("==seesionid:", sess.SessionID())
-		//if user == "zlx" && passwd == "zlx" {
-		jc := addJenkinsClient(user, passwd)
+		fmt.Println(sess)
+		jc := addJenkinsClient(usr, pwd)
 		if jc == nil {
-			log.Errorf("%s get jenkins cleint failed", user)
+			log.Errorf("%s get jenkins cleint failed", usr)
 			fmt.Fprintf(w, "failuer")
 			return
 		}
+		//JenkinsClient[sess.SessionID()] = jc
 		JenkinsClient[sess.SessionID()] = jc
 		fmt.Println(JenkinsClient)
+		/*
+			} else {
+				ssn, _ := GlobalSessions.GetSessionStore(sid.Value)
+				if ssn.Get("user") == usr {
+					log.Debugf(usr)
+				}
+			}
+		*/
 		fmt.Fprintf(w, "success")
+		return
 		/*
 			} else {
 				w.WriteHeader(401)
