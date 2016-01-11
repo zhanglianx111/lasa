@@ -39,7 +39,9 @@ $(document).ready(function () {
 
       // process
       var td4 = tr.insertCell(4);
-      td4.innerHTML = "<div class=\"progress\"><div id=\"processor_"+jobname+"\"" + "class=\"progress-bar progress-bar-striped active\" role=\"progressbar\" aria-valuenow=\"90\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"min-width: 0em; width: 0%\">0%</div></div>";
+      //td4.innerHTML = "<div class=\"progress\"><div id=\"processor_"+jobname+"\"" + "class=\"progress-bar progress-bar-striped active\" role=\"progressbar\" aria-valuenow=\"90\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"min-width: 0em; width: 0%\">0%</div></div>";
+      //var td4.innerHTML = "<button class=\"btn btn-sm btn-warning\"><span class=\"glyphicon glyphicon-refresh glyphicon-refresh-animate\"></span> process...</button>";
+      var td4.innerHTML = '<button class="btn btn-sm btn-warning"><span></span>process...</button>';
 		};
 	};
 
