@@ -11,7 +11,8 @@ $(document).ready(function () {
 			var name = data[id].name;
 			var url = data[id].url;
 		}
-		addrows(data);
+		// addrows(data);
+		renderRow(data);
 	};
 
 	function renderDropDown(id, data) {
