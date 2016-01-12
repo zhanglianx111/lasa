@@ -13,7 +13,7 @@ $(document).ready(function () {
 			var url = jobs[id].url;
 		}
 		// addrows(data);
-		renderRow(data);
+		renderRow(jobs);
 	};
 
 	function renderDropDown(id, data) {
