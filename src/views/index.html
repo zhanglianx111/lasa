@@ -180,11 +180,24 @@
           var p = $(a).parent().parent().parent().parent().parent();
           var jobname = p.children()[1].innerHTML;
           $.post("/api/job/build/" + jobname, function success() {
-              console.log("build ok");
+              console.log("start a build ok");
+              console.log(p);
+              var $id = p.children()[0].innerHTML;
+
+              console.log($id);
+              var $tr = $("tr[data-id=" +$id + "]");
+              var $btn = $tr.first("button");
+              var $span = $btn.find('span');
+              console.log($span);
+              $span.html('<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>')
+
+              //p.children()[4].innerHTML='<td><button class="btn btn-sm btn-warning"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>process...</button></td>'; 
               console.log(jobname);
+                complate(jobname,$span );
+              /*
               do {
                 console.log("start");
-                setTimeout(complate(jobname), 2000);
+                setTimeout(complate(jobname,$span ), 2000);
                 console.log("end");
                // console.log(complate(jobname));
               } while(false);
@@ -202,12 +215,15 @@
               }
               */
               });
-        function complate(jobname) {
+        function complate(jobname, span ) {
           $.get("/api/build/result/"+jobname, function success(response) {
              console.log(response); 
              if (response.length == 0) {
                 return false;
                 } else {
+                  // 停止等待
+                  span.html('<span></span>');
+                  // TODO 显示build结果
                   return true;
                 }
               }); 

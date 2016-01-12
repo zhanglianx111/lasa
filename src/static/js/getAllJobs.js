@@ -46,7 +46,7 @@ $(document).ready(function () {
 			var trId = i + 1;
 
 			content += '<tr data-id="' + trId + '">' +
-				'<td>' + each.id + '</td>' +
+				'<td>' + trId+ '</td>' +
 				'<td>' + each.name + '</td>' +
 				'<td>' + each.name + '</td>' +
 				'<td>' + renderDropDown(trId, each) + '</td>' +
@@ -56,7 +56,7 @@ $(document).ready(function () {
 
 		$tableBody.html(content);
 	}
-
+/*
 	function addrows(data)
 	{
 		var dataLength = data.length;
