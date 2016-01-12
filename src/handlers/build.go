@@ -8,6 +8,7 @@ import (
 	"time"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/bndr/gojenkins"
 	"github.com/go-martini/martini"
 	//"fmt"
 )
@@ -33,14 +34,14 @@ func HandlerBuildConsoleOutput(params martini.Params, w http.ResponseWriter, r *
 	}
 	bLog := buildlog{}
 	time.Sleep(1000 * time.Millisecond)
-	latestId := getLatestBuildID(jobid)
+	jc := getJenkinsClient(r)
+	latestId := getLatestBuildID(jc, jobid)
 	if latestId == -1 {
 		bLog.Log = "no log found, please Do Build Action"
 		tBuildLog.Execute(w, bLog)
 		return
 	}
-
-	build, err := JenkinsClient.GetBuild(jobid, latestId)
+	build, err := jc.GetBuild(jobid, latestId)
 	if err != nil {
 		log.Errorf("get job:%s build faild", jobid)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -53,8 +54,8 @@ func HandlerBuildConsoleOutput(params martini.Params, w http.ResponseWriter, r *
 	return
 }
 
-func getLatestBuildID(jobname string) int64 {
-	job, err := JenkinsClient.GetJob(jobname)
+func getLatestBuildID(jc *gojenkins.Jenkins, jobname string) int64 {
+	job, err := jc.GetJob(jobname)
 	if err != nil {
 		log.Errorf(err.Error())
 		return -1
@@ -65,14 +66,13 @@ func getLatestBuildID(jobname string) int64 {
 		log.Errorf(err.Error())
 		return -1
 	}
-	log.Debugf("latest build ids:", ids)
 	/*
 		for _, id := range ids {
 			fmt.Println(id.Number)
 		}
 	*/
 	if len(ids) != 0 {
-		fmt.Println(jobname, " latest id: ", ids[0].Number)
+		log.Debugf("%s latest id:%d", jobname, ids[0].Number)
 		return ids[0].Number
 	} else {
 		return -1
@@ -91,11 +91,12 @@ func HandlerGetBuildResult(params martini.Params, w http.ResponseWriter, r *http
 		}
 	*/
 	//time.Sleep(5000 * time.Millisecond)
-	latestId := getLatestBuildID(jobid)
+	jc := getJenkinsClient(r)
+	latestId := getLatestBuildID(jc, jobid)
 	if latestId == -1 {
 		return
 	}
-	build, err := JenkinsClient.GetBuild(jobid, latestId)
+	build, err := jc.GetBuild(jobid, latestId)
 	if err != nil {
 		log.Errorf("get job:%s build faild", jobid)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -117,8 +118,8 @@ func HandlerStop(params martini.Params, w http.ResponseWriter, r *http.Request) 
 		log.Errorf("str to int64 faild")
 		return
 	}
-
-	build, err := JenkinsClient.GetBuild(jobid, n)
+	jc := getJenkinsClient(r)
+	build, err := jc.GetBuild(jobid, n)
 	if err != nil {
 		log.Errorf("get job:%s build faild", jobid)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

@@ -1,15 +1,16 @@
-//$(function() {
 $(document).ready(function () {
 	console.log("mabide");
-	jQuery.get("/api/job/alljobs", {}, success, "");
+	//jQuery.get("/api/job/alljobs", {}, success, "");
+	jQuery.get("/api/view/zlx", {}, success, "");
 
 	function success(data, textStatus, jqXHR)
 	{
-		//console.log(data[0]);
-		for (id in data) {
+		console.log(data["jobs"]);
+    var jobs = data["jobs"]
+		for (id in jobs) {
 			//console.log(data[id].name);
-			var name = data[id].name;
-			var url = data[id].url;
+			var name = jobs[id].name;
+			var url = jobs[id].url;
 		}
 		// addrows(data);
 		renderRow(data);

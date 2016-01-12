@@ -20,8 +20,8 @@ type Node struct {
 
 func HandlerGetAllNodes(w http.ResponseWriter, r *http.Request) {
 	var nodes []Node
-
-	allNodes, err := JenkinsClient.GetAllNodes()
+	jc := getJenkinsClient(r)
+	allNodes, err := jc.GetAllNodes()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -47,7 +47,8 @@ func HandlerGetNode(w http.ResponseWriter, r *http.Request) {
 	params := r.URL.Query()
 	nodeName := params.Get(":nodeid")
 
-	node, err := JenkinsClient.GetNode(nodeName)
+	jc := getJenkinsClient(r)
+	node, err := jc.GetNode(nodeName)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -109,7 +110,8 @@ func HandlerAddNode(w http.ResponseWriter, r *http.Request) {
 	rf := strings.Split(remotefs, " ")
 	rfs := "/" + rf[0] + "/" + rf[1] + "/" + rf[2]
 	fmt.Println(params.Get(":method"))
-	node, err := JenkinsClient.CreateNode(nodeName, numexecutors, description, rfs, sshLauncher)
+	jc := getJenkinsClient(r)
+	node, err := jc.CreateNode(nodeName, numexecutors, description, rfs, sshLauncher)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -124,7 +126,8 @@ func HandlerDeleteNode(w http.ResponseWriter, r *http.Request) {
 	params := r.URL.Query()
 	nodeName := params.Get(":nodeid")
 
-	node, err := JenkinsClient.GetNode(nodeName)
+	jc := getJenkinsClient(r)
+	node, err := jc.GetNode(nodeName)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -146,7 +149,8 @@ func HandlerNodeToggleTemporarilyOffline(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	node, err := JenkinsClient.GetNode(nodeid)
+	jc := getJenkinsClient(r)
+	node, err := jc.GetNode(nodeid)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -167,7 +171,8 @@ func HandlerNodeToggleTemporarilyOffline(w http.ResponseWriter, r *http.Request)
 
 func HandlerSetOnline(w http.ResponseWriter, r *http.Request) {
 	nodeid := r.URL.Query().Get(":nodeid")
-	node, err := JenkinsClient.GetNode(nodeid)
+	jc := getJenkinsClient(r)
+	node, err := jc.GetNode(nodeid)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -187,7 +192,8 @@ func HandlerSetOnline(w http.ResponseWriter, r *http.Request) {
 
 func HandlerSetOffline(w http.ResponseWriter, r *http.Request) {
 	nodeid := r.URL.Query().Get(":nodeid")
-	node, err := JenkinsClient.GetNode(nodeid)
+	jc := getJenkinsClient(r)
+	node, err := jc.GetNode(nodeid)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -207,7 +213,8 @@ func HandlerSetOffline(w http.ResponseWriter, r *http.Request) {
 
 func HandlerNodeInfo(w http.ResponseWriter, r *http.Request) {
 	nodeid := r.URL.Query().Get(":nodeid")
-	node, err := JenkinsClient.GetNode(nodeid)
+	jc := getJenkinsClient(r)
+	node, err := jc.GetNode(nodeid)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -228,7 +235,8 @@ func HandlerIsJnlpAgent(w http.ResponseWriter, r *http.Request) {
 
 func HandlerIsIdle(w http.ResponseWriter, r *http.Request) {
 	nodeid := r.URL.Query().Get(":nodeid")
-	node, err := JenkinsClient.GetNode(nodeid)
+	jc := getJenkinsClient(r)
+	node, err := jc.GetNode(nodeid)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -249,7 +257,8 @@ func HandlerIsIdle(w http.ResponseWriter, r *http.Request) {
 
 func HandlersLaunchNode(w http.ResponseWriter, r *http.Request) {
 	nodeid := r.URL.Query().Get(":nodeid")
-	node, err := JenkinsClient.GetNode(nodeid)
+	jc := getJenkinsClient(r)
+	node, err := jc.GetNode(nodeid)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -267,7 +276,8 @@ func HandlersLaunchNode(w http.ResponseWriter, r *http.Request) {
 func HandlerDisconnect(w http.ResponseWriter, r *http.Request) {
 	nodeid := r.URL.Query().Get(":nodeid")
 
-	node, err := JenkinsClient.GetNode(nodeid)
+	jc := getJenkinsClient(r)
+	node, err := jc.GetNode(nodeid)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -284,7 +294,8 @@ func HandlerDisconnect(w http.ResponseWriter, r *http.Request) {
 
 func HandlerGetLogText(w http.ResponseWriter, r *http.Request) {
 	nodeid := r.URL.Query().Get(":nodeid")
-	node, err := JenkinsClient.GetNode(nodeid)
+	jc := getJenkinsClient(r)
+	node, err := jc.GetNode(nodeid)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		fmt.Println("+++++")
@@ -302,7 +313,8 @@ func HandlerGetLogText(w http.ResponseWriter, r *http.Request) {
 
 func HandlerIsOnline(w http.ResponseWriter, r *http.Request) {
 	nodeid := r.URL.Query().Get(":nodeid")
-	node, err := JenkinsClient.GetNode(nodeid)
+	jc := getJenkinsClient(r)
+	node, err := jc.GetNode(nodeid)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

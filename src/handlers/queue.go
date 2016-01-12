@@ -1,15 +1,16 @@
 package handlers
 
 import (
-	"net/http"
 	"encoding/json"
 	"fmt"
+	"net/http"
 )
 
 func HandlerGetQueue(w http.ResponseWriter, r *http.Request) {
 	aQueue := make(map[string]string)
 
-	queue, err := JenkinsClient.GetQueue()
+	jc := getJenkinsClient(r)
+	queue, err := jc.GetQueue()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -34,7 +35,8 @@ func HandlerGetQueue(w http.ResponseWriter, r *http.Request) {
 func HandlerGetQueueUrl(w http.ResponseWriter, r *http.Request) {
 	aUrl := make(map[string]string)
 
-	url := JenkinsClient.GetQueueUrl()
+	jc := getJenkinsClient(r)
+	url := jc.GetQueueUrl()
 	if url == "" {
 		aUrl["url"] = ""
 	} else {

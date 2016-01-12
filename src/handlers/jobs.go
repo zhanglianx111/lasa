@@ -187,8 +187,8 @@ func HandlerCreateJob(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, "write to string failed")
 			return
 		}
-
-		job, err := JenkinsClient.CreateJob(job_data, jobid)
+		jc := getJenkinsClient(r)
+		job, err := jc.CreateJob(job_data, jobid)
 		if err != nil {
 			log.Errorf("create job: %s failed", jobid)
 			fmt.Fprintf(w, err.Error())
@@ -213,7 +213,8 @@ func HandlerCreateJob(w http.ResponseWriter, r *http.Request) {
 func HandlerDeleteJob(params martini.Params, w http.ResponseWriter, r *http.Request) {
 	jobid := params["jobid"]
 	log.Debugf("delete job:%s", jobid)
-	_, err := JenkinsClient.DeleteJob(jobid)
+	jc := getJenkinsClient(r)
+	_, err := jc.DeleteJob(jobid)
 	if err != nil {
 		log.Errorf(err.Error())
 		fmt.Fprintf(w, err.Error())
@@ -232,7 +233,8 @@ func HandlerDeleteJob(params martini.Params, w http.ResponseWriter, r *http.Requ
 func HandlerDisableJob(params martini.Params, w http.ResponseWriter, r *http.Request) {
 	jobid := params["jobid"]
 	log.Debugf("disable job: %s", jobid)
-	job, err := JenkinsClient.GetJob(jobid)
+	jc := getJenkinsClient(r)
+	job, err := jc.GetJob(jobid)
 	if err != nil {
 		log.Errorf(err.Error())
 		fmt.Fprintf(w, err.Error())
@@ -252,7 +254,8 @@ func HandlerDisableJob(params martini.Params, w http.ResponseWriter, r *http.Req
 func HandlerEnableJob(params martini.Params, w http.ResponseWriter, r *http.Request) {
 	jobid := params["jobid"]
 	log.Debugf("enable job:%s", jobid)
-	job, err := JenkinsClient.GetJob(jobid)
+	jc := getJenkinsClient(r)
+	job, err := jc.GetJob(jobid)
 	if err != nil {
 		log.Errorf(err.Error())
 		fmt.Fprintf(w, err.Error())
@@ -277,7 +280,8 @@ func HandlerRenameJob(params martini.Params, w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	job := JenkinsClient.RenameJob(oldName, newName)
+	jc := getJenkinsClient(r)
+	job := jc.RenameJob(oldName, newName)
 	if job == nil {
 		fmt.Fprintf(w, "job rename faild")
 	}
@@ -292,7 +296,8 @@ func HandlerGetJob(params martini.Params, w http.ResponseWriter, r *http.Request
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
-	job, err := JenkinsClient.GetJob(jobid)
+	jc := getJenkinsClient(r)
+	job, err := jc.GetJob(jobid)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -310,11 +315,20 @@ func HandlerGetJob(params martini.Params, w http.ResponseWriter, r *http.Request
 }
 
 func HandlerGetAllJobs(w http.ResponseWriter, r *http.Request) {
+	log.Debugf("%s %s", r.Method, r.URL)
 	var jobsData []map[string]interface{}
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
-	jobs, _ := JenkinsClient.GetAllJobs()
+	cookie, _ := r.Cookie("sessionId")
+	//sess, _ := GlobalSessions.SessionStart(w, r)
+	sess, _ := GlobalSessions.GetSessionStore(cookie.Value)
+	log.Debugf("user:%s", sess.Get("user"))
+	fmt.Println(sess)
+	log.Debugf("sid: %s", sess.SessionID())
+	jc := getJenkinsClient(r)
+	fmt.Println("jc:", jc)
+	jobs, _ := jc.GetAllJobs()
 	for _, job := range jobs {
 		jobData := utils.AnalysisJob(job.Raw)
 		jobsData = append(jobsData, jobData)
@@ -347,7 +361,8 @@ func HandlerGetAllBuildIds(params martini.Params, w http.ResponseWriter, r *http
 		return
 	}
 
-	job, err1 := JenkinsClient.GetJob(jobid)
+	jc := getJenkinsClient(r)
+	job, err1 := jc.GetJob(jobid)
 	if err1 != nil {
 		fmt.Fprintf(w, err1.Error())
 		return
@@ -379,7 +394,8 @@ func HandlerJobRunning(params martini.Params, w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	job, err := JenkinsClient.GetJob(jobid)
+	jc := getJenkinsClient(r)
+	job, err := jc.GetJob(jobid)
 	if err != nil {
 		fmt.Fprintf(w, err.Error())
 		return
@@ -400,7 +416,8 @@ func HandlerJobRunning(params martini.Params, w http.ResponseWriter, r *http.Req
 
 func HandlerBuildJob(params martini.Params, w http.ResponseWriter, r *http.Request) {
 	jobid := params["jobid"]
-	job, err := JenkinsClient.GetJob(jobid)
+	jc := getJenkinsClient(r)
+	job, err := jc.GetJob(jobid)
 	if err != nil {
 		fmt.Fprintf(w, "get job:%s failed", jobid)
 		return
@@ -418,7 +435,7 @@ func HandlerBuildJob(params martini.Params, w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	b, err := JenkinsClient.BuildJob(jobid)
+	b, err := jc.BuildJob(jobid)
 	if err != nil {
 		fmt.Fprintf(w, err.Error())
 		return
@@ -439,7 +456,8 @@ func HandlerStopBuild(params martini.Params, w http.ResponseWriter, r *http.Requ
 		log.Errorf("string to int64 faild")
 		return
 	}
-	build, err := JenkinsClient.GetBuild(jobid, n)
+	jc := getJenkinsClient(r)
+	build, err := jc.GetBuild(jobid, n)
 	if err != nil {
 		log.Errorf("get build job:%s faild", jobid)
 		fmt.Fprintf(w, err.Error())
@@ -459,7 +477,8 @@ func HandlerStopBuild(params martini.Params, w http.ResponseWriter, r *http.Requ
 func HandlerJobConfig(params martini.Params, w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		jobid := params["jobid"]
-		job, err := JenkinsClient.GetJob(jobid)
+		jcc := getJenkinsClient(r)
+		job, err := jcc.GetJob(jobid)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

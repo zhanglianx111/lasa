@@ -3,7 +3,10 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"reflect"
+	"strings"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/bndr/gojenkins"
 	"github.com/go-martini/martini"
 	//"github.com/zhanglianx111/gojenkins"
@@ -14,7 +17,8 @@ func HandlerCreateView(params martini.Params, w http.ResponseWriter, r *http.Req
 	viewName := params["name"]
 	viewType := params["type"]
 	fmt.Println(viewName, viewType)
-	view, err := JenkinsClient.CreateView(viewName, gojenkins.LIST_VIEW)
+	jc := getJenkinsClient(r)
+	view, err := jc.CreateView(viewName, gojenkins.LIST_VIEW)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 
@@ -39,7 +43,8 @@ func HandlerViewAddJob(params martini.Params, w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	view, err := JenkinsClient.GetView(viewName)
+	jc := getJenkinsClient(r)
+	view, err := jc.GetView(viewName)
 	fmt.Println(view)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -71,7 +76,8 @@ func HandlerViewDeleteJob(params martini.Params, w http.ResponseWriter, r *http.
 		return
 	}
 
-	view, err := JenkinsClient.GetView(viewName)
+	jc := getJenkinsClient(r)
+	view, err := jc.GetView(viewName)
 	fmt.Println(view)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -92,7 +98,8 @@ func HandlerViewDeleteJob(params martini.Params, w http.ResponseWriter, r *http.
 func HandlerGetAllViews(w http.ResponseWriter, r *http.Request) {
 	var allViews []map[string]interface{}
 
-	views, err := JenkinsClient.GetAllViews()
+	jc := getJenkinsClient(r)
+	views, err := jc.GetAllViews()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -114,15 +121,25 @@ func HandlerGetAllViews(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandlerGetView(params martini.Params, w http.ResponseWriter, r *http.Request) {
-	fmt.Println(params)
+	log.Debugf("%s %s", r.Method, r.URL)
+	cookie, _ := r.Cookie("sessionId")
+	sess, _ := GlobalSessions.GetSessionStore(cookie.Value)
+	log.Debugf("user:%s", sess.Get("user"))
+	fmt.Println(sess)
+	log.Debugf("sid: %s", sess.SessionID())
 	viewName := params["viewid"]
-	fmt.Println(viewName)
+	user := reflect.ValueOf(sess.Get("user")).String()
+	if strings.Compare(user, "admin") == 0 {
+		viewName = "All"
+	}
+
 	if viewName == "" {
 		fmt.Fprintf(w, "params(view) is empty")
 		return
 	}
 
-	view, err := JenkinsClient.GetView(viewName)
+	jc := getJenkinsClient(r)
+	view, err := jc.GetView(viewName)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
