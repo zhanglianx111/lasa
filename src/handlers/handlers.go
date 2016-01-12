@@ -33,7 +33,7 @@ func init() {
 
 	// session uses memory
 	GlobalSessions, _ = session.NewManager(
-		"cookie", `{"cookieName":"sessionId","enableSetCookie":true,"gclifetime":30,"ProviderConfig":"{\"cookieName\":\"sessionId\",\"securityKey\":\"beegocookiehashkey\"}"}`)
+		"memory", `{"cookieName":"sessionId","enableSetCookie":true,"gclifetime":30,"ProviderConfig":"{\"cookieName\":\"sessionId\",\"securityKey\":\"beegocookiehashkey\"}"}`)
 	go GlobalSessions.GC()
 	JenkinsClient = make(map[string]*gojenkins.Jenkins)
 	/*

@@ -29,20 +29,7 @@ func HandlerLogin(w http.ResponseWriter, r *http.Request) {
 	} else {
 		usr := r.PostFormValue("user")
 		pwd := r.PostFormValue("passwd")
-		/*
-			sid, err := r.Cookie("sessionId")
-			if err != nil {
-				// a new session
-				fmt.Println("xxxxxxxxxx")
-				sess, err = GlobalSessions.SessionStart(w, r)
-				if err != nil {
-					log.Warnf("session err: %s", err.Error())
-				}
-				//defer sess.SessionRelease(w)
-				fmt.Println(sess)
-		*/
 		sess.Set("user", usr)
-		//sess.SessionRelease(w)
 		fmt.Println(sess)
 		jc := addJenkinsClient(usr, pwd)
 		if jc == nil {
@@ -50,17 +37,8 @@ func HandlerLogin(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, "failuer")
 			return
 		}
-		//JenkinsClient[sess.SessionID()] = jc
 		JenkinsClient[sess.SessionID()] = jc
 		fmt.Println(JenkinsClient)
-		/*
-			} else {
-				ssn, _ := GlobalSessions.GetSessionStore(sid.Value)
-				if ssn.Get("user") == usr {
-					log.Debugf(usr)
-				}
-			}
-		*/
 		fmt.Fprintf(w, "success")
 		return
 		/*

@@ -3,8 +3,12 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"reflect"
+	"strings"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/bndr/gojenkins"
+	"github.com/go-martini/martini"
 	//"github.com/zhanglianx111/gojenkins"
 	"net/http"
 )
@@ -119,9 +123,18 @@ func HandlerGetAllViews(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonData)
 }
 
-func HandlerGetView(w http.ResponseWriter, r *http.Request) {
-	params := r.URL.Query()
-	viewName := params.Get(":viewid")
+func HandlerGetView(params martini.Params, w http.ResponseWriter, r *http.Request) {
+	log.Debugf("%s %s", r.Method, r.URL)
+	cookie, _ := r.Cookie("sessionId")
+	sess, _ := GlobalSessions.GetSessionStore(cookie.Value)
+	log.Debugf("user:%s", sess.Get("user"))
+	fmt.Println(sess)
+	log.Debugf("sid: %s", sess.SessionID())
+	viewName := params["viewid"]
+	user := reflect.ValueOf(sess.Get("user")).String()
+	if strings.Compare(user, "admin") == 0 {
+		viewName = "All"
+	}
 	if viewName == "" {
 		fmt.Fprintf(w, "params(view) is empty")
 		return
