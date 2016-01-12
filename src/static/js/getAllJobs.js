@@ -51,7 +51,7 @@ $(document).ready(function () {
 				'<td>' + each.name + '</td>' +
 				'<td>' + each.name + '</td>' +
 				'<td>' + renderDropDown(trId, each) + '</td>' +
-				'<td><button class="btn btn-sm btn-warning"><span></span>process...</button></td>' +
+				'<td><button class="btn btn-sm btn-warning"><span></span>Build...</button></td>' +
 				'</tr>';
 		}
 
