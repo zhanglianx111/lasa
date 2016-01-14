@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
-	"strings"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/bndr/gojenkins"
@@ -133,7 +132,7 @@ func HandlerGetView(params martini.Params, w http.ResponseWriter, r *http.Reques
 	log.Debugf("sid: %s", sess.SessionID())
 	viewName := params["viewid"]
 	user := reflect.ValueOf(sess.Get("user")).String()
-	if strings.Compare(user, "admin") == 0 {
+	if user == "admin" {
 		viewName = "All"
 	}
 
