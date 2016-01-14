@@ -17,7 +17,8 @@ func HandlerCreateView(params martini.Params, w http.ResponseWriter, r *http.Req
 	viewName := params["name"]
 	viewType := params["type"]
 	fmt.Println(viewName, viewType)
-	jc := getJenkinsClient(r)
+	cookie, _ := r.Cookie("sessionId")
+	jc := getJenkinsClient(cookie.Value)
 	view, err := jc.CreateView(viewName, gojenkins.LIST_VIEW)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -43,7 +44,8 @@ func HandlerViewAddJob(params martini.Params, w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	jc := getJenkinsClient(r)
+	cookie, _ := r.Cookie("sessionId")
+	jc := getJenkinsClient(cookie.Value)
 	view, err := jc.GetView(viewName)
 	fmt.Println(view)
 	if err != nil {
@@ -76,7 +78,8 @@ func HandlerViewDeleteJob(params martini.Params, w http.ResponseWriter, r *http.
 		return
 	}
 
-	jc := getJenkinsClient(r)
+	cookie, _ := r.Cookie("sessionId")
+	jc := getJenkinsClient(cookie.Value)
 	view, err := jc.GetView(viewName)
 	fmt.Println(view)
 	if err != nil {
@@ -98,7 +101,8 @@ func HandlerViewDeleteJob(params martini.Params, w http.ResponseWriter, r *http.
 func HandlerGetAllViews(w http.ResponseWriter, r *http.Request) {
 	var allViews []map[string]interface{}
 
-	jc := getJenkinsClient(r)
+	cookie, _ := r.Cookie("sessionId")
+	jc := getJenkinsClient(cookie.Value)
 	views, err := jc.GetAllViews()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -138,7 +142,7 @@ func HandlerGetView(params martini.Params, w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	jc := getJenkinsClient(r)
+	jc := getJenkinsClient(cookie.Value)
 	view, err := jc.GetView(viewName)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

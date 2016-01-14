@@ -14,6 +14,7 @@ import (
 )
 
 func HandlerBuildConsoleOutput(params martini.Params, w http.ResponseWriter, r *http.Request) {
+	log.Debugf("%s %s", r.Method, r.URL)
 	jobid := params["jobid"]
 	/*
 		number := params["number"]
@@ -34,7 +35,9 @@ func HandlerBuildConsoleOutput(params martini.Params, w http.ResponseWriter, r *
 	}
 	bLog := buildlog{}
 	time.Sleep(1000 * time.Millisecond)
-	jc := getJenkinsClient(r)
+	cookie, _ := r.Cookie("sessionId")
+	log.Debugf("cookie value:%s", cookie.Value)
+	jc := getJenkinsClient(cookie.Value)
 	latestId := getLatestBuildID(jc, jobid)
 	if latestId == -1 {
 		bLog.Log = "no log found, please Do Build Action"
@@ -91,7 +94,8 @@ func HandlerGetBuildResult(params martini.Params, w http.ResponseWriter, r *http
 		}
 	*/
 	//time.Sleep(5000 * time.Millisecond)
-	jc := getJenkinsClient(r)
+	cookie, _ := r.Cookie("sessionId")
+	jc := getJenkinsClient(cookie.Value)
 	latestId := getLatestBuildID(jc, jobid)
 	if latestId == -1 {
 		return
@@ -118,7 +122,8 @@ func HandlerStop(params martini.Params, w http.ResponseWriter, r *http.Request) 
 		log.Errorf("str to int64 faild")
 		return
 	}
-	jc := getJenkinsClient(r)
+	cookie, _ := r.Cookie("sessionId")
+	jc := getJenkinsClient(cookie.Value)
 	build, err := jc.GetBuild(jobid, n)
 	if err != nil {
 		log.Errorf("get job:%s build faild", jobid)

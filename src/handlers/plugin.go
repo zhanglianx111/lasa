@@ -17,8 +17,8 @@ func HandlerGetPlugins(w http.ResponseWriter, r *http.Request) {
 	d := params.Get(":depth")
 	depth, _ := strconv.Atoi(d)
 	fmt.Println(depth)
-
-	jc := getJenkinsClient(r)
+	cookie, _ := r.Cookie("sessionId")
+	jc := getJenkinsClient(cookie.Value)
 	plugins, err := jc.GetPlugins(depth)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

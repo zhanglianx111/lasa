@@ -8,8 +8,9 @@ import (
 
 func HandlerGetQueue(w http.ResponseWriter, r *http.Request) {
 	aQueue := make(map[string]string)
+	cookie, _ := r.Cookie("sessionid")
+	jc := getJenkinsClient(cookie.Value)
 
-	jc := getJenkinsClient(r)
 	queue, err := jc.GetQueue()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -35,7 +36,8 @@ func HandlerGetQueue(w http.ResponseWriter, r *http.Request) {
 func HandlerGetQueueUrl(w http.ResponseWriter, r *http.Request) {
 	aUrl := make(map[string]string)
 
-	jc := getJenkinsClient(r)
+	cookie, _ := r.Cookie("sessionid")
+	jc := getJenkinsClient(cookie.Value)
 	url := jc.GetQueueUrl()
 	if url == "" {
 		aUrl["url"] = ""

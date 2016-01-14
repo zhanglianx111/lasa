@@ -81,4 +81,6 @@ func init() {
 	Routers.Post("/api/node/disconnect/:nodeid", handlers.HandlerDisconnect)
 	/* log */
 	Routers.Post("/api/log/set/:level", handlers.HandlerSetLogLevel)
+	/* credentials */
+	Routers.Post("/api/credentials/:usr/:passwd", handlers.HandlerCredentials)
 }

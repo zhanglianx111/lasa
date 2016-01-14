@@ -19,7 +19,8 @@ func HandlerGetInfo(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origi", "*")
-	jc := getJenkinsClient(r)
+	cookie, _ := r.Cookie("sessionId")
+	jc := getJenkinsClient(cookie.Value)
 	info, err := jc.Info()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

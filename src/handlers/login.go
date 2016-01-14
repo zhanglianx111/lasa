@@ -88,10 +88,8 @@ func addJenkinsClient(user, passwd string) *gojenkins.Jenkins {
 	return jenkins
 }
 
-func getJenkinsClient(r *http.Request) *gojenkins.Jenkins {
-	sid, _ := r.Cookie("sessionId")
-	log.Debugf("session id:%s", sid.Value)
-	s, _ := GlobalSessions.GetSessionStore(sid.Value)
+func getJenkinsClient(sid string) *gojenkins.Jenkins {
+	s, _ := GlobalSessions.GetSessionStore(sid)
 	fmt.Println(s.SessionID())
 	jc := JenkinsClient[s.SessionID()]
 	fmt.Println(jc)

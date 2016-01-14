@@ -3,6 +3,9 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"os"
+
+	mgo "gopkg.in/mgo.v2"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/astaxie/beego/session"
@@ -14,6 +17,7 @@ import (
 var JenkinsClient map[string]*gojenkins.Jenkins
 var GlobalSessions *session.Manager
 var JobConfig *etree.Document
+var MgoDB *mgo.Session
 var BaseCfg = "handlers/_tests/config.xml"
 
 type JenkinsInfo struct {
@@ -30,7 +34,13 @@ func init() {
 		log.Errorf(err.Error())
 		return
 	}
-
+	/*
+		// connect mongodb
+		MgoDB = getMongoDB()
+		if MgoDB == nil {
+			return
+		}
+	*/
 	// session uses memory
 	GlobalSessions, _ = session.NewManager(
 		"memory", `{"cookieName":"sessionId","enableSetCookie":true,"gclifetime":30,"ProviderConfig":"{\"cookieName\":\"sessionId\",\"securityKey\":\"beegocookiehashkey\"}"}`)
@@ -47,6 +57,29 @@ func init() {
 			}
 		}
 	*/
+}
+
+func getMongoDB() *mgo.Session {
+	var mongodbHost, mongodbPort string
+	if os.Getenv("ENVIRONMENT") == "production" {
+		mongodbHost = os.Getenv("MONGODB_HOST")
+		mongodbPort = os.Getenv("MONGODB_PORT")
+		if mongodbHost == "" || mongodbPort == "" {
+			log.Errorf("mongodbHost:%s, mongodbPort:%s", mongodbHost, mongodbPort)
+			return nil
+		}
+	} else {
+		mongodbPort = "10.10.11.207"
+		mongodbPort = "40001"
+	}
+
+	url := "monogodb://" + mongodbHost + ":" + mongodbPort
+	sess, err := mgo.Dial(url)
+	if err != nil {
+		log.Errorf("mongodbHost:%s, mongodbPort:%s", mongodbHost, mongodbPort)
+		return nil
+	}
+	return sess
 }
 
 /*
